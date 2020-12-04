@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/tagify/3.21.5/tagify.min.css" />
+  <link rel="stylesheet" type="text/css" href="app.css" />
+
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
+  <script type="text/javascript">
+    require.config({
+      shim: {
+        "bootstrap": ["jquery"]
+      },
+      paths: {
+        "jquery" : "//code.jquery.com/jquery-3.5.1.min",
+        "bootstrap" :  "//stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min",
+        "tagify": "//cdnjs.cloudflare.com/ajax/libs/tagify/3.21.5/tagify.min",
+      }
+    })
+  </script>
+  <script type="text/javascript" src="app.js"></script>
+</head>
+<body>
+  <div class="container">
+    <form class="mainbox col-md-12">
+      <h2>Mood sampling</h2>
+
+      <datalist id="ticklist">
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+        <option>5</option>
+        <option>6</option>
+        <option>7</option>
+      </datalist>
+      <div id="emotion-group" class="form-group container">
+        <h4>Emotions</h4>
+      </div>
+
+      <div id="state-group" class="form-group container">
+        <h4>Overall state</h4>
+
+        <div class="row">
+          <div class='col-md-2 range-label'><label for='energy'>Energy</label></div>
+          <div class='col-md-10'><input type='range' min='1' max='7' step='1' list='ticklist' class='form-control' name='Energy' /></div>
+        </div>
+        <div class="row">
+          <div class='col-md-2 range-label'><label for='energy'>Motivation</label></div>
+          <div class='col-md-10'><input type='range' min='1' max='7' step='1' list='ticklist' class='form-control' name='Energy' /></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="activities">Activities</label>
+        <input class='form-control' id="activities" name="activities" />
+      </div>
+      <div class="form-group">
+        <label for="sensations">Sensations</label>
+        <input class='form-control' id="sensations" name="sensations" />
+      </div>
+
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+</body>
+</html>

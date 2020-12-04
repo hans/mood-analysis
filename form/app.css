@@ -1,0 +1,12 @@
+.container {
+  margin: 50px auto;
+}
+
+.form-group .range-label {
+  text-align: right;
+  vertical-align: middle;
+}
+
+#state-group .range-label {
+  font-weight: bold;
+}
