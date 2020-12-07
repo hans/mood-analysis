@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 
 import { FormBuilder, FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 
+import { SettingsModel } from '../tagify/angular-tagify.component';
+
 import { FirebaseService } from '../services/firebase.service';
 
 
@@ -20,6 +22,8 @@ export class FormComponent implements OnInit {
   get emotionControls() {
     return this.entryForm.get("emotions") as FormGroup;
   }
+
+  tagifySettings: SettingsModel = {whitelist: ["abc", "def"]};
 
   validation_messages = {
     name: [
