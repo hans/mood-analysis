@@ -1,11 +1,12 @@
 <form class="create-form" *ngIf="entryForm" [formGroup]="entryForm" novalidate (ngSubmit)="onSubmit(entryForm.value)">
 
+  <h3>Emotions</h3>
   <div formGroupName="emotions" *ngFor="let emotion of emotions | keyvalue">
-    <div class="form-group" layout>
+    <div layout>
       <div flex="10" layout layout-align="center center">
         <span class="md-body-1">{{emotion.value.name}}</span>
       </div>
-      <mat-slider flex step="1" min="1" max="7" tickInterval="1" [formControlName]="emotion.key"></mat-slider>
+      <mat-slider flex md-discrete step="1" min="1" max="7" tickInterval="1" [formControlName]="emotion.key"></mat-slider>
     </div>
   </div>
 

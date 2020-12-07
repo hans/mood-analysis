@@ -48,16 +48,13 @@ export class FormComponent implements OnInit {
 
       console.log(this.entryForm)
     });
-
-    // // Create form
-    // const emotionFormGroup =
-    // this.entryForm = this.fb.group({
-    //   name: ["", Validators.required],
-    // })
   }
 
   onSubmit(value: {string: any}) {
     console.log(value);
+
+    // Create test entry.
+    console.log(this.firebase.addEntry(value));
   }
 
 }
