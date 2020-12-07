@@ -8,6 +8,7 @@ import { FirebaseService } from '../services/firebase.service';
 
 
 export interface Emotion {
+  id: string,
   name: string,
 }
 
@@ -18,7 +19,7 @@ export interface Emotion {
 })
 export class FormComponent implements OnInit {
   entryForm!: FormGroup;
-  emotions: {[key: string]: Emotion} = {};
+  emotions: Emotion[] = [];
   get emotionControls() {
     return this.entryForm.get("emotions") as FormGroup;
   }
@@ -43,10 +44,14 @@ export class FormComponent implements OnInit {
 
     // Generate a form group based on available emotions.
     this.firebase.emotions.subscribe(emotions => {
+      // Sort by name.
+      emotions.sort((a, b) => a.payload.doc.data().name > b.payload.doc.data.name ? 1 : -1);
+
       emotions.forEach((e: any) => {
         console.log(e)
         const doc = e.payload.doc;
-        this.emotions[doc.id] = doc.data();
+
+        this.emotions.push(Object.assign({id: doc.id}, doc.data()));
         emotionGroup[doc.id] = this.fb.control("");
       });
   //  }).then(() => {

@@ -16,7 +16,8 @@ export class FirebaseService {
   constructor(public db: AngularFirestore) { }
 
   get emotions() {
-    return this.db.collection("emotions").snapshotChanges() as Observable<DocumentChangeAction<Emotion>[]>;
+    return this.db.collection("emotions", ref => ref.orderBy("name"))
+      .snapshotChanges() as Observable<DocumentChangeAction<Emotion>[]>;
   }
 
   get activities() {
