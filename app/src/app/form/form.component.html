@@ -5,10 +5,10 @@
   <h3>Emotions</h3>
   <div formGroupName="emotions" *ngFor="let emotion of emotions">
     <div layout="row">
-      <div flex="10" layout-align="center center">
+      <div layout-align="center center">
         <span class="md-body-1">{{emotion.name}}</span>
       </div>
-      <mat-slider flex="20" md-discrete step="1" min="1" max="7" tickInterval="1" [formControlName]="emotion.id"></mat-slider>
+      <mat-slider md-discrete thumbLabel step="1" min="1" max="7" tickInterval="1" [formControlName]="emotion.id"></mat-slider>
     </div>
   </div>
 

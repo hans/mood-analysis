@@ -56,7 +56,7 @@ export class FormComponent implements OnInit {
       });
   //  }).then(() => {
       this.entryForm = this.fb.group({
-        activities: ["st"],
+        activities: [],
         emotions: this.fb.group(emotionGroup),
       });
 
