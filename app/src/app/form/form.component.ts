@@ -1,8 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 
 import { FirebaseService } from '../services/firebase.service';
+
+
+export interface Emotion {
+  name: string,
+}
 
 @Component({
   selector: 'app-form',
@@ -10,7 +15,11 @@ import { FirebaseService } from '../services/firebase.service';
   styleUrls: ['./form.component.css']
 })
 export class FormComponent implements OnInit {
-  entryForm: FormGroup;
+  entryForm!: FormGroup;
+  emotions: {[key: string]: Emotion} = {};
+  get emotionControls() {
+    return this.entryForm.get("emotions") as FormGroup;
+  }
 
   validation_messages = {
     name: [
@@ -22,19 +31,33 @@ export class FormComponent implements OnInit {
               private firebase: FirebaseService) { }
 
   ngOnInit(): void {
-    const entryForm: any = {};
+    const emotionGroup: {[key: string]: any} = {};
 
     // Generate a form group based on available emotions.
     this.firebase.getEmotions().subscribe(emotions => {
-      emotions.forEach(e => {
-        entryForm[e.id] = new FormControl()
-      })
+      emotions.forEach((e: any) => {
+        console.log(e)
+        const doc = e.payload.doc;
+        this.emotions[doc.id] = doc.data();
+        emotionGroup[doc.id] = this.fb.control("");
+      });
+  //  }).then(() => {
+      this.entryForm = this.fb.group({
+        emotions: this.fb.group(emotionGroup),
+      });
+
+      console.log(this.entryForm)
     });
 
-    // Create form
-    this.entryForm = this.fb.group({
-      name: ["", Validators.required],
-    })
+    // // Create form
+    // const emotionFormGroup =
+    // this.entryForm = this.fb.group({
+    //   name: ["", Validators.required],
+    // })
+  }
+
+  onSubmit(value: {string: any}) {
+    console.log(value);
   }
 
 }
