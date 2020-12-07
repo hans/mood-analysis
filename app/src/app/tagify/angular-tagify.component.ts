@@ -1,4 +1,5 @@
-import {AfterViewInit, Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, forwardRef, Input, Output, ViewChild} from '@angular/core';
+import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import * as Tagify from '@yaireo/tagify';
 
 export interface SettingsModel {
@@ -49,15 +50,25 @@ export interface SettingsModel {
 
 @Component({
   selector: 'tagify',
-  template: `<input *ngIf="settings" #tagifyInputRef/>`
+  template: `<input *ngIf="settings" #tagifyInputRef/>`,
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => TagifyComponent),
+      multi: true
+    }
+  ]
 })
-export class TagifyComponent implements AfterViewInit {
+export class TagifyComponent implements AfterViewInit, ControlValueAccessor {
   @Output() add = new EventEmitter(); // returns the added tag + updated tags list
   @Output() remove = new EventEmitter(); // returns the updated tags list
   @Input() settings: SettingsModel; // get possible tagify settings
   @Input() value: string | Array<string>
 
   @ViewChild('tagifyInputRef') tagifyInputRef: any;
+
+  private onChange: any = null;
+  private onTouched: any = null;
 
   private tagify;
 
@@ -66,13 +77,29 @@ export class TagifyComponent implements AfterViewInit {
       return;
     }
     this.settings.callbacks = {
-      add: () => this.add.emit({
-        tags: this.tagify.value,
-        added: this.tagify.value[this.tagify.value.length - 1]
-      }),
-      remove: () => this.remove.emit(this.tagify.value)
+      add: () => {
+        this.add.emit({
+          tags: this.tagify.value,
+          added: this.tagify.value[this.tagify.value.length - 1]
+        });
+
+        if (this.onChange !== null)
+          this.onChange(this.tagify.value);
+      },
+      remove: () => {
+        this.remove.emit(this.tagify.value);
+
+        if (this.onChange !== null)
+          this.onChange(this.tagify.value);
+      }
     };
+
     this.tagify = new Tagify(this.tagifyInputRef.nativeElement, this.settings);
+
+    if (this.value) {
+      const value = this.value;
+      setTimeout(() => this.addTags(value));
+    }
   }
 
   ngOnChanges({ value }) {
@@ -101,5 +128,26 @@ export class TagifyComponent implements AfterViewInit {
    */
   destroy() {
     this.tagify.destroy();
+  }
+
+  writeValue(value) {
+    if (value == null)
+      return;
+    this.value = value;
+
+    if (!this.tagify)
+      // Not yet rendered.
+      return;
+
+    this.removeAll();
+    this.addTags(value as string[]);
+  }
+
+  registerOnChange(fn) {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn) {
+    this.onTouched = fn;
   }
 }

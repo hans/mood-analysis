@@ -1,6 +1,11 @@
 import { Injectable } from '@angular/core';
 
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore, DocumentChangeAction } from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
+
+
+export interface Emotion { id?: string, name: string };
+export interface Activity { id?: string, name: string };
 
 
 @Injectable({
@@ -10,8 +15,12 @@ export class FirebaseService {
 
   constructor(public db: AngularFirestore) { }
 
-  getEmotions() {
-    return this.db.collection("emotions").snapshotChanges();
+  get emotions() {
+    return this.db.collection("emotions").snapshotChanges() as Observable<DocumentChangeAction<Emotion>[]>;
+  }
+
+  get activities() {
+    return this.db.collection("activities").valueChanges() as Observable<Activity[]>;
   }
 
   addEntry(entry: any) {

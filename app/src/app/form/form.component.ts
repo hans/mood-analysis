@@ -23,7 +23,11 @@ export class FormComponent implements OnInit {
     return this.entryForm.get("emotions") as FormGroup;
   }
 
-  tagifySettings: SettingsModel = {whitelist: ["abc", "def"]};
+  tagifySettings: SettingsModel = {
+    autoComplete: { enabled: true, rightKey: true },
+    whitelist: []
+  };
+  activitiesReady = false;
 
   validation_messages = {
     name: [
@@ -38,7 +42,7 @@ export class FormComponent implements OnInit {
     const emotionGroup: {[key: string]: any} = {};
 
     // Generate a form group based on available emotions.
-    this.firebase.getEmotions().subscribe(emotions => {
+    this.firebase.emotions.subscribe(emotions => {
       emotions.forEach((e: any) => {
         console.log(e)
         const doc = e.payload.doc;
@@ -47,11 +51,17 @@ export class FormComponent implements OnInit {
       });
   //  }).then(() => {
       this.entryForm = this.fb.group({
+        activities: ["st"],
         emotions: this.fb.group(emotionGroup),
       });
 
       console.log(this.entryForm)
     });
+
+    this.firebase.activities.subscribe(activities => {
+      this.tagifySettings.whitelist = activities.map(a => a.name);
+      this.activitiesReady = true;
+    })
   }
 
   onSubmit(value: {string: any}) {
