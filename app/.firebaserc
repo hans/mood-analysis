@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "mood-85e71": {
+      "hosting": {
+        "app": [
+          "mood-85e71"
+        ]
+      }
+    }
+  }
+}

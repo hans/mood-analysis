@@ -1,0 +1,18 @@
+<form class="create-form" [formGroup]="entryForm" novalidate (ngSubmit)="onSubmit(entryForm.value)">
+
+  <div class="form-group">
+    <mat-form-field class="input-style">
+      <input matInput placeholder="Name" class="form-control" formControlName="name">
+    </mat-form-field>
+    <ng-container *ngFor="let validation of validation_messages.name">
+      <mat-error *ngIf="entryForm.get('name').hasError(validation.type) && (entryForm.get('name').dirty || entryForm.get('name').touched)">{{validation}}</mat-error>
+    </ng-container>
+  </div>
+
+  <div class="row submit-button-container">
+    <div class="col-md-4">
+      <button mat-raised-button class="submit-button" color="primary" type="submit" [disabled]="!entryForm.valid">Create</button>
+    </div>
+  </div>
+
+</form>
