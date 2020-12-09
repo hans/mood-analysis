@@ -12,6 +12,10 @@ export interface Emotion {
   name: string,
 }
 
+export interface Activity {
+  id: string
+}
+
 @Component({
   selector: 'app-form',
   templateUrl: './form.component.html',
@@ -48,32 +52,26 @@ export class FormComponent implements OnInit {
       emotions.sort((a, b) => a.payload.doc.data().name > b.payload.doc.data.name ? 1 : -1);
 
       emotions.forEach((e: any) => {
-        console.log(e)
         const doc = e.payload.doc;
 
         this.emotions.push(Object.assign({id: doc.id}, doc.data()));
         emotionGroup[doc.id] = this.fb.control("");
       });
-  //  }).then(() => {
+
       this.entryForm = this.fb.group({
         activities: [],
         emotions: this.fb.group(emotionGroup),
       });
-
-      console.log(this.entryForm)
     });
 
-    this.firebase.activities.subscribe(activities => {
-      this.tagifySettings.whitelist = activities.map(a => a.name);
+    this.firebase.activities.subscribe(activitySnapshots => {
+      this.tagifySettings.whitelist = activitySnapshots.map(a => a.payload.doc.id);
       this.activitiesReady = true;
     })
   }
 
   onSubmit(value: {string: any}) {
-    console.log(value);
-
-    // Create test entry.
-    console.log(this.firebase.addEntry(value));
+    this.firebase.addEntry(value);
   }
 
 }

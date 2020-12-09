@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { AngularFirestore, DocumentChangeAction } from '@angular/fire/firestore';
+import { AngularFirestore, AngularFirestoreDocument, DocumentChangeAction, DocumentSnapshot } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 
 
@@ -21,10 +21,26 @@ export class FirebaseService {
   }
 
   get activities() {
-    return this.db.collection("activities").valueChanges() as Observable<Activity[]>;
+    return this.db.collection("activities")
+      .snapshotChanges() as Observable<DocumentChangeAction<Activity>[]>;
   }
 
-  addEntry(entry: any) {
+  /**
+   * Retrieve an activity document, creating if necessary.
+   */
+  async getActivity(name: string): Promise<AngularFirestoreDocument> {
+    let doc = this.db.collection("activities").doc(name);
+
+    let docSnapshot = await doc.get().toPromise();
+    if (!(docSnapshot && docSnapshot.exists)) {
+      // Create the document
+      doc.set({createdAt: new Date()});
+    }
+
+    return doc;
+  }
+
+  async addEntry(entry: any) {
     // Build entry document with reference to emotions
     const emotions = [];
     for (let e_id in entry.emotions) {
@@ -39,9 +55,14 @@ export class FirebaseService {
       })
     }
 
+    const activityDocs: AngularFirestoreDocument[] =
+      await Promise.all(entry.activities.map(el => this.getActivity(el.value)));
+    const activityRefs = activityDocs.map(d => d.ref);
+
     const entryDoc = {
       createdAt: new Date(),
       emotions: emotions,
+      activities: activityRefs,
     };
     console.log(entryDoc);
 
