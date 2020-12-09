@@ -254,8 +254,10 @@ AppComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineCompo
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FirebaseService", function() { return FirebaseService; });
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "fXoL");
-/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/fire/firestore */ "I/3d");
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/fire/firestore */ "I/3d");
+
 
 
 
@@ -270,37 +272,57 @@ class FirebaseService {
             .snapshotChanges();
     }
     get activities() {
-        return this.db.collection("activities").valueChanges();
+        return this.db.collection("activities")
+            .snapshotChanges();
+    }
+    /**
+     * Retrieve an activity document, creating if necessary.
+     */
+    getActivity(name) {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            let doc = this.db.collection("activities").doc(name);
+            let docSnapshot = yield doc.get().toPromise();
+            if (!(docSnapshot && docSnapshot.exists)) {
+                // Create the document
+                doc.set({ createdAt: new Date() });
+            }
+            return doc;
+        });
     }
     addEntry(entry) {
-        // Build entry document with reference to emotions
-        const emotions = [];
-        for (let e_id in entry.emotions) {
-            const value = entry.emotions[e_id];
-            if (value == "")
-                // Don't save missing values
-                continue;
-            emotions.push({
-                emotion: this.db.doc(`emotions/${e_id}`).ref,
-                value: entry.emotions[e_id]
-            });
-        }
-        const entryDoc = {
-            createdAt: new Date(),
-            emotions: emotions,
-        };
-        console.log(entryDoc);
-        return this.db.collection("entries").add(entryDoc);
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            // Build entry document with reference to emotions
+            const emotions = [];
+            for (let e_id in entry.emotions) {
+                const value = entry.emotions[e_id];
+                if (value == "")
+                    // Don't save missing values
+                    continue;
+                emotions.push({
+                    emotion: this.db.doc(`emotions/${e_id}`).ref,
+                    value: entry.emotions[e_id]
+                });
+            }
+            const activityDocs = yield Promise.all(entry.activities.map(el => this.getActivity(el.value)));
+            const activityRefs = activityDocs.map(d => d.ref);
+            const entryDoc = {
+                createdAt: new Date(),
+                emotions: emotions,
+                activities: activityRefs,
+            };
+            console.log(entryDoc);
+            return this.db.collection("entries").add(entryDoc);
+        });
     }
 }
-FirebaseService.ɵfac = function FirebaseService_Factory(t) { return new (t || FirebaseService)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](_angular_fire_firestore__WEBPACK_IMPORTED_MODULE_1__["AngularFirestore"])); };
-FirebaseService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: FirebaseService, factory: FirebaseService.ɵfac, providedIn: "root" });
-/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](FirebaseService, [{
-        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"],
+FirebaseService.ɵfac = function FirebaseService_Factory(t) { return new (t || FirebaseService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_fire_firestore__WEBPACK_IMPORTED_MODULE_2__["AngularFirestore"])); };
+FirebaseService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: FirebaseService, factory: FirebaseService.ɵfac, providedIn: "root" });
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](FirebaseService, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"],
         args: [{
                 providedIn: "root"
             }]
-    }], function () { return [{ type: _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_1__["AngularFirestore"] }]; }, null); })();
+    }], function () { return [{ type: _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_2__["AngularFirestore"] }]; }, null); })();
 
 
 /***/ }),
@@ -519,27 +541,22 @@ class FormComponent {
             // Sort by name.
             emotions.sort((a, b) => a.payload.doc.data().name > b.payload.doc.data.name ? 1 : -1);
             emotions.forEach((e) => {
-                console.log(e);
                 const doc = e.payload.doc;
                 this.emotions.push(Object.assign({ id: doc.id }, doc.data()));
                 emotionGroup[doc.id] = this.fb.control("");
             });
-            //  }).then(() => {
             this.entryForm = this.fb.group({
                 activities: [],
                 emotions: this.fb.group(emotionGroup),
             });
-            console.log(this.entryForm);
         });
-        this.firebase.activities.subscribe(activities => {
-            this.tagifySettings.whitelist = activities.map(a => a.name);
+        this.firebase.activities.subscribe(activitySnapshots => {
+            this.tagifySettings.whitelist = activitySnapshots.map(a => a.payload.doc.id);
             this.activitiesReady = true;
         });
     }
     onSubmit(value) {
-        console.log(value);
-        // Create test entry.
-        console.log(this.firebase.addEntry(value));
+        this.firebase.addEntry(value);
     }
 }
 FormComponent.ɵfac = function FormComponent_Factory(t) { return new (t || FormComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormBuilder"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_services_firebase_service__WEBPACK_IMPORTED_MODULE_2__["FirebaseService"])); };
