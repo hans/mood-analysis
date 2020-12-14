@@ -3,6 +3,7 @@ import { environment } from '../environments/environment';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
@@ -17,10 +18,12 @@ import { TagifyComponent } from './tagify/angular-tagify.component';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 
+import { AppRoutingModule } from './app-routing.module';
+
 import { AppComponent } from './app.component';
 import { FormComponent } from './form/form.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ListComponent } from './list/list.component';
+
 
 @NgModule({
   declarations: [
@@ -45,6 +48,7 @@ import { ListComponent } from './list/list.component';
     MatSliderModule,
     MatSidenavModule,
     MatListModule,
+    AppRoutingModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,11 +1,11 @@
 <mat-sidenav-container class="example-container">
   <mat-sidenav mode="side" opened>
     <mat-nav-list>
-      <mat-list-item>Report</mat-list-item>
+      <mat-list-item><a routerLink="/form">Report</a></mat-list-item>
     </mat-nav-list>
   </mat-sidenav>
 
   <mat-sidenav-content>
-    <app-form></app-form>
+    <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>

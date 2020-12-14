@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, FormControl, Validators, FormArray } from '@ang
 import { SettingsModel } from '../tagify/angular-tagify.component';
 
 import { FirebaseService } from '../services/firebase.service';
+import { Router } from '@angular/router';
 
 
 export interface Emotion {
@@ -41,7 +42,8 @@ export class FormComponent implements OnInit {
   }
 
   constructor(private fb: FormBuilder,
-              private firebase: FirebaseService) { }
+              private firebase: FirebaseService,
+              private router: Router) { }
 
   ngOnInit(): void {
     const emotionGroup: {[key: string]: any} = {};
@@ -71,7 +73,9 @@ export class FormComponent implements OnInit {
   }
 
   onSubmit(value: {string: any}) {
-    this.firebase.addEntry(value);
+    this.firebase.addEntry(value).then(res => {
+      this.router.navigate(["/list"]);
+    });
   }
 
 }
