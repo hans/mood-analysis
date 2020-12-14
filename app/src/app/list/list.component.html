@@ -1,1 +1,18 @@
-<p>list works!</p>
+<table mat-table [dataSource]="entries">
+  <ng-container matColumnDef="createdAt">
+    <th mat-header-cell *matHeaderCellDef>Datetime</th>
+    <td mat-cell *matCellDef="let element">{{element.createdAt.toDate() | date: 'yyyy-MM-dd HH:MM'}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="activities">
+    <th mat-header-cell *matHeaderCellDef>Activities</th>
+    <td mat-cell *matCellDef="let element">
+      <span *ngFor="let activity of element.activities">
+        {{activity}}
+      </span>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>

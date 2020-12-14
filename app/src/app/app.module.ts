@@ -11,7 +11,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatListModule } from '@angular/material/list'; 
+import { MatListModule } from '@angular/material/list';
+import { MatTableModule } from '@angular/material/table';
 
 import { TagifyComponent } from './tagify/angular-tagify.component';
 
@@ -24,7 +25,7 @@ import { AppComponent } from './app.component';
 import { FormComponent } from './form/form.component';
 import { ListComponent } from './list/list.component';
 
-
+ 
 @NgModule({
   declarations: [
     AppComponent,
@@ -48,6 +49,7 @@ import { ListComponent } from './list/list.component';
     MatSliderModule,
     MatSidenavModule,
     MatListModule,
+    MatTableModule,
     AppRoutingModule,
   ],
   providers: [],

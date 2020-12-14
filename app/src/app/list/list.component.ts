@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FirebaseService } from '../services/firebase.service';
+import { Entry, FirebaseService } from '../services/firebase.service';
 
 @Component({
   selector: 'app-list',
@@ -8,11 +8,14 @@ import { FirebaseService } from '../services/firebase.service';
 })
 export class ListComponent implements OnInit {
 
+  entries: Entry[];
+  displayedColumns = ["createdAt", "activities"];
+
   constructor(private firebase: FirebaseService) { }
 
   ngOnInit(): void {
     this.firebase.getRecentEntries().subscribe((entries) => {
-      
+      this.entries = entries;
     })
   }
 
