@@ -3,19 +3,13 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreDocument, DocumentChangeAction, DocumentReference, DocumentSnapshot } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 
-
-export interface NormalizedEntry {
-  createdAt: Date,
-  emotions: [{"emotion": DocumentReference<unknown>, "value": number}],
-  activities: [DocumentReference<unknown>]
-}
+export interface Emotion { id?: string, name: string };
+export interface Activity { id?: string, count: number };
 export interface Entry {
   createdAt: Date,
-  emotions: [{"emotion": Emotion, "value": number}],
-  activities: Activity[]
+  emotions: Record<string, number>,
+  activities: string[]
 }
-export interface Emotion { id?: string, name: string };
-export interface Activity { id?: string, name: string };
 
 
 @Injectable({
@@ -26,7 +20,7 @@ export class FirebaseService {
   constructor(public db: AngularFirestore) { }
 
   get emotions() {
-    return this.db.collection("emotions", ref => ref.orderBy("name"))
+    return this.db.collection("emotions")
       .snapshotChanges() as Observable<DocumentChangeAction<Emotion>[]>;
   }
 
@@ -39,25 +33,6 @@ export class FirebaseService {
     return this.db.collection("entries", ref => ref.orderBy("createdAt", "desc").limit(limit))
       .valueChanges() as Observable<Entry[]>;
   }
-  // 
-  // async denormalizeEntry(entry: NormalizedEntry): Entry {
-  //   // Fetch emotions
-  //   let emotions = await Promise.all(
-  //     entry.emotions.map(em => this.db.collection("emotions").doc(em.emotion.path).snapshotChanges().subscribe(val => {
-  //       let data: any = val.payload.data();
-  //       return {id: val.payload.id, name: data.name}
-  //     })));
-  //   let activities = await Promise.all(
-  //     entry.activities.map(ac => this.db.collection("activities").doc(ac.path).snapshotChanges().subscribe(ac => {
-  //       return {name: ac.payload.id}
-  //     })));
-  //
-  //   return {
-  //     createdAt: entry.createdAt,
-  //     emotions: emotions,
-  //     activities: activities
-  //   }
-  // }
 
   /**
    * Retrieve an activity document, creating if necessary.
@@ -75,33 +50,21 @@ export class FirebaseService {
   }
 
   async addEntry(entry: any) {
-    // Build entry document with reference to emotions
-    const emotions = [];
-    for (let e_id in entry.emotions) {
-      const value = entry.emotions[e_id];
-      if (value == "")
-        // Don't save missing values
-        continue;
+    entry.createdAt = new Date();
+    console.log(entry);
 
-      emotions.push({
-        emotion: this.db.doc(`emotions/${e_id}`).ref,
-        value: entry.emotions[e_id]
+    // TODO run this in a transaction?
+    // Get documents for each activity
+    entry.activities.forEach((activity: string) => {
+      var activityDoc: AngularFirestoreDocument<Activity> =
+        this.db.collection("activities").doc(activity);
+      activityDoc.get().subscribe(doc => {
+        var count = doc.exists ? doc.data().count || 0 : 0;
+        activityDoc.set({count: count + 1}, {merge: true});
       })
-    }
+    });
 
-    const activityDocs: AngularFirestoreDocument[] =
-      entry.activities ? await Promise.all(entry.activities.map(el => this.getActivity(el.value)))
-                       : [];
-    const activityRefs = activityDocs?.map(d => d.ref);
-
-    const entryDoc = {
-      createdAt: new Date(),
-      emotions: emotions,
-      activities: activityRefs,
-    };
-    console.log(entryDoc);
-
-    return this.db.collection("entries").add(entryDoc);
+    this.db.collection("entries").add(entry);
   }
 
 }

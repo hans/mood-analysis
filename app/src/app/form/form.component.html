@@ -6,7 +6,7 @@
   <div formGroupName="emotions" *ngFor="let emotion of emotions">
     <div layout="row">
       <div layout-align="center center">
-        <span class="md-body-1">{{emotion.name}}</span>
+        <span class="md-body-1">{{emotion.id}}</span>
       </div>
       <mat-slider md-discrete thumbLabel step="1" min="1" max="7" tickInterval="1" [formControlName]="emotion.id"></mat-slider>
     </div>
