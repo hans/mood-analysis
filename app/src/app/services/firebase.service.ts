@@ -53,28 +53,6 @@ export class FirebaseService {
         activityDoc.set({count: count + 1}, {merge: true});
       })
     });
-    // })
-    // // var activityRefs = entry.activities.map(
-    // //   (activity: string) => this.db.collection("activities").doc(activity));
-    //
-    //
-    // this.db.firestore.runTransaction(async t => {
-    //   // For each activity, update corresponding counts
-    //   activityRefs.map((ref: DocumentReference<Activity>) => {
-    //     t.get(ref).then(activityDoc => {
-    //       var method = t.set, count = 0;
-    //       if (activityDoc.exists) {
-    //         method = t.update;
-    //         count = activityDoc.data().count;
-    //       }
-    //
-    //       console.log(ref);
-    //       method(ref, {count: count + 1})
-    //     })
-    //   });
-    //
-    //   t.set(doc, entry);
-    // });
 
     this.db.collection("entries").add(entry);
   }
