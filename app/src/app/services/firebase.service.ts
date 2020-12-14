@@ -90,8 +90,9 @@ export class FirebaseService {
     }
 
     const activityDocs: AngularFirestoreDocument[] =
-      await Promise.all(entry.activities.map(el => this.getActivity(el.value)));
-    const activityRefs = activityDocs.map(d => d.ref);
+      entry.activities ? await Promise.all(entry.activities.map(el => this.getActivity(el.value)))
+                       : [];
+    const activityRefs = activityDocs?.map(d => d.ref);
 
     const entryDoc = {
       createdAt: new Date(),
