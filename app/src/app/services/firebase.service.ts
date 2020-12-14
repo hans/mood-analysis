@@ -1,9 +1,19 @@
 import { Injectable } from '@angular/core';
 
-import { AngularFirestore, AngularFirestoreDocument, DocumentChangeAction, DocumentSnapshot } from '@angular/fire/firestore';
+import { AngularFirestore, AngularFirestoreDocument, DocumentChangeAction, DocumentReference, DocumentSnapshot } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 
 
+export interface NormalizedEntry {
+  createdAt: Date,
+  emotions: [{"emotion": DocumentReference<unknown>, "value": number}],
+  activities: [DocumentReference<unknown>]
+}
+export interface Entry {
+  createdAt: Date,
+  emotions: [{"emotion": Emotion, "value": number}],
+  activities: Activity[]
+}
 export interface Emotion { id?: string, name: string };
 export interface Activity { id?: string, name: string };
 
@@ -24,6 +34,30 @@ export class FirebaseService {
     return this.db.collection("activities")
       .snapshotChanges() as Observable<DocumentChangeAction<Activity>[]>;
   }
+
+  getRecentEntries(limit = 50): Observable<Entry[]> {
+    return this.db.collection("entries", ref => ref.orderBy("createdAt", "desc").limit(limit))
+      .valueChanges() as Observable<Entry[]>;
+  }
+  // 
+  // async denormalizeEntry(entry: NormalizedEntry): Entry {
+  //   // Fetch emotions
+  //   let emotions = await Promise.all(
+  //     entry.emotions.map(em => this.db.collection("emotions").doc(em.emotion.path).snapshotChanges().subscribe(val => {
+  //       let data: any = val.payload.data();
+  //       return {id: val.payload.id, name: data.name}
+  //     })));
+  //   let activities = await Promise.all(
+  //     entry.activities.map(ac => this.db.collection("activities").doc(ac.path).snapshotChanges().subscribe(ac => {
+  //       return {name: ac.payload.id}
+  //     })));
+  //
+  //   return {
+  //     createdAt: entry.createdAt,
+  //     emotions: emotions,
+  //     activities: activities
+  //   }
+  // }
 
   /**
    * Retrieve an activity document, creating if necessary.
