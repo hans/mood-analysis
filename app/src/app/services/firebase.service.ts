@@ -16,7 +16,7 @@ export class FirebaseService {
   constructor(public db: AngularFirestore) { }
 
   get emotions() {
-    return this.db.collection("emotions", ref => ref.orderBy("name"))
+    return this.db.collection("emotions")
       .snapshotChanges() as Observable<DocumentChangeAction<Emotion>[]>;
   }
 
@@ -41,33 +41,10 @@ export class FirebaseService {
   }
 
   async addEntry(entry: any) {
-    // Build entry document with reference to emotions
-    const emotions = [];
-    for (let e_id in entry.emotions) {
-      const value = entry.emotions[e_id];
-      if (value == "")
-        // Don't save missing values
-        continue;
+    entry.createdAt = new Date();
+    console.log(entry);
 
-      emotions.push({
-        emotion: this.db.doc(`emotions/${e_id}`).ref,
-        value: entry.emotions[e_id]
-      })
-    }
-
-    const activityDocs: AngularFirestoreDocument[] =
-      entry.activities ? await Promise.all(entry.activities.map(el => this.getActivity(el.value)))
-                       : [];
-    const activityRefs = activityDocs?.map(d => d.ref);
-
-    const entryDoc = {
-      createdAt: new Date(),
-      emotions: emotions,
-      activities: activityRefs,
-    };
-    console.log(entryDoc);
-
-    return this.db.collection("entries").add(entryDoc);
+    return this.db.collection("entries").add(entry);
   }
 
 }

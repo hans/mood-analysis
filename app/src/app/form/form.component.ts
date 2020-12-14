@@ -49,7 +49,7 @@ export class FormComponent implements OnInit {
     // Generate a form group based on available emotions.
     this.firebase.emotions.subscribe(emotions => {
       // Sort by name.
-      emotions.sort((a, b) => a.payload.doc.data().name > b.payload.doc.data.name ? 1 : -1);
+      emotions.sort((a, b) => a.payload.doc.id > b.payload.doc.id ? 1 : -1);
 
       emotions.forEach((e: any) => {
         const doc = e.payload.doc;
@@ -70,7 +70,17 @@ export class FormComponent implements OnInit {
     })
   }
 
-  onSubmit(value: {string: any}) {
+  onSubmit(value: {[key: string]: any}) {
+    value.activities = value.activities ? value.activities.map(el => el.value) : [];
+
+    // Remove emotions which were not set.
+    value.emotions = Object.entries(value.emotions)
+      .filter((item) => item[1] != "")
+      .reduce((obj, item) => {
+        obj[item[0]] = item[1];
+        return obj;
+      }, {})
+
     this.firebase.addEntry(value);
   }
 
