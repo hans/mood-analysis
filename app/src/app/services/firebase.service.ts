@@ -29,6 +29,11 @@ export class FirebaseService {
       .snapshotChanges() as Observable<DocumentChangeAction<Activity>[]>;
   }
 
+  getFrequentActivities(limit = 20) {
+    return this.db.collection("activities", ref => ref.orderBy("count", "desc").limit(limit))
+      .snapshotChanges() as Observable<DocumentChangeAction<Activity>[]>;
+  }
+
   getRecentEntries(limit = 50): Observable<Entry[]> {
     return this.db.collection("entries", ref => ref.orderBy("createdAt", "desc").limit(limit))
       .valueChanges() as Observable<Entry[]>;

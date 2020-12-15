@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 
 import { SettingsModel } from '../tagify/angular-tagify.component';
+import { TagifyService } from '../tagify/angular-tagify.service';
 
 import { FirebaseService } from '../services/firebase.service';
 import { Router } from '@angular/router';
@@ -34,6 +35,8 @@ export class FormComponent implements OnInit {
     whitelist: []
   };
   activitiesReady = false;
+  frequentActivities: {name: string, count: number}[];
+  frequentActivitiesReady = false;
 
   validation_messages = {
     name: [
@@ -43,7 +46,8 @@ export class FormComponent implements OnInit {
 
   constructor(private fb: FormBuilder,
               private firebase: FirebaseService,
-              private router: Router) { }
+              private router: Router,
+              private tagifyService: TagifyService) { }
 
   ngOnInit(): void {
     const emotionGroup: {[key: string]: any} = {};
@@ -70,6 +74,13 @@ export class FormComponent implements OnInit {
       this.tagifySettings.whitelist = activitySnapshots.map(a => a.payload.doc.id);
       this.activitiesReady = true;
     })
+
+    this.firebase.getFrequentActivities().subscribe(acts => {
+      this.frequentActivities = acts.map(a => {
+        return {name: a.payload.doc.id, count: a.payload.doc.data().count}
+      });
+      this.frequentActivitiesReady = true;
+    })
   }
 
   onSubmit(value: {[key: string]: any}) {
@@ -82,10 +93,24 @@ export class FormComponent implements OnInit {
         obj[item[0]] = item[1];
         return obj;
       }, {})
-      
+
     this.firebase.addEntry(value).then(res => {
       this.router.navigate(["/list"]);
     });
+  }
+
+  onPickActivity(event: MouseEvent, activity: string) {
+    // Remove associated tag component
+    let el = event.srcElement as HTMLElement;
+    // find tagify root node for this tag
+    while (!el.hasAttribute("class") || ` ${el.getAttribute("class")} `.indexOf(" tagify__tag ") == -1) {
+      el = el.parentNode as HTMLElement;
+    }
+    // One more up
+    el = el.parentNode as HTMLElement;
+    el.parentNode.removeChild(el);
+
+    this.tagifyService.addTags([activity]);
   }
 
 }

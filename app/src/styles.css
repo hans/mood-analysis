@@ -4,3 +4,13 @@ html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .mat-nav-list .active-list-item { background: #ccc; }
+
+.activity-picker.tagify { border: none; }
+.activity-picker .tagify__tag { cursor: pointer; }
+.activity-picker .activity-picker-count {
+  font-size: 13px;
+  color: #aaa;
+}
+.activity-picker .activity-picker-count:before {
+  content: " × ";
+}

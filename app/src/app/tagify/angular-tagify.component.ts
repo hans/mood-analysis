@@ -1,6 +1,7 @@
 import {AfterViewInit, Component, EventEmitter, forwardRef, Input, Output, ViewChild} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import * as Tagify from '@yaireo/tagify';
+import { TagifyService } from './angular-tagify.service';
 
 export interface SettingsModel {
   placeholder?: string;
@@ -70,6 +71,7 @@ export class TagifyComponent implements AfterViewInit, ControlValueAccessor {
   private onChange: any = null;
   private onTouched: any = null;
 
+  constructor(private tagifyService: TagifyService) { }
   private tagify;
 
   ngAfterViewInit() {
@@ -94,7 +96,7 @@ export class TagifyComponent implements AfterViewInit, ControlValueAccessor {
       }
     };
 
-    this.tagify = new Tagify(this.tagifyInputRef.nativeElement, this.settings);
+    this.tagify = this.tagifyService.getTagifyRef(this.tagifyInputRef.nativeElement, this.settings);
 
     if (this.value) {
       const value = this.value;

@@ -14,6 +14,15 @@
 
   <h3>Activities</h3>
   <tagify *ngIf="activitiesReady" [settings]="tagifySettings" formControlName="activities"></tagify>
+  <div *ngIf="frequentActivitiesReady" class="tagify activity-picker">
+    <div *ngFor="let act of frequentActivities">
+      <div (click)="onPickActivity($event, act.name)" class="tagify__tag">
+        <div>
+          <span class="tagify__tag-text">{{act.name}}</span>
+        </div>
+      </div> <span class="activity-picker-count">{{act.count}}</span>
+    </div>
+  </div>
 
   <div class="row submit-button-container">
     <div class="col-md-4">
