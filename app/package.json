@@ -24,6 +24,9 @@
     "@angular/router": "~11.0.3",
     "@yaireo/tagify": "^3.21.5",
     "firebase": "^7.0 || ^8.0",
+    "lodash": "^4.17.20",
+    "ml-matrix": "^6.5.3",
+    "ml-pca": "^4.0.1",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2"

@@ -24,6 +24,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { FormComponent } from './form/form.component';
 import { ListComponent } from './list/list.component';
+import { StatsComponent } from './stats/stats.component';
 
 
 @NgModule({
@@ -32,6 +33,7 @@ import { ListComponent } from './list/list.component';
     FormComponent,
     TagifyComponent,
     ListComponent,
+    StatsComponent,
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebase),

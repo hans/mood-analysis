@@ -11,6 +11,12 @@ export interface Entry {
   activities: string[]
 }
 
+export interface Stat {
+  createdAt: Date;
+  type: string;
+  data: any;
+}
+
 
 @Injectable({
   providedIn: "root"
@@ -70,6 +76,26 @@ export class FirebaseService {
     });
 
     this.db.collection("entries").add(entry);
+  }
+
+  /**
+   * Record statistical model results, and optionally propagate data onto entries.
+   *
+   * @param entryData Maps entry document IDs to arbitrary result blobs
+   */
+  async addStat(stat: Stat, entryData?: Record<string, any>) {
+    this.db.collection("stats").add(stat);
+
+    if (entryData) {
+      Object.entries(entryData).forEach(el => {
+        let [id, docStats] = el;
+
+        let docUpdate = {};
+        docUpdate[stat.type] = docStats;
+        console.log("docStats", docStats);
+        this.db.collection("entries").doc(id).collection("stats").add(docUpdate);
+      });
+    }
   }
 
 }
