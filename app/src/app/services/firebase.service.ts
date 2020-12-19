@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { AngularFirestore, AngularFirestoreDocument, DocumentChangeAction, DocumentReference, DocumentSnapshot } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 
 export interface Emotion { id?: string, name: string };
 export interface Activity { id?: string, count: number };
@@ -43,6 +43,11 @@ export class FirebaseService {
   getRecentEntries(limit = 50): Observable<Entry[]> {
     return this.db.collection("entries", ref => ref.orderBy("createdAt", "desc").limit(limit))
       .valueChanges() as Observable<Entry[]>;
+  }
+
+  getEntriesById(...ids: string[]): Observable<Entry[]> {
+    return forkJoin(
+      ids.map(id => this.db.collection("entries").doc(id).valueChanges() as Observable<Entry>));
   }
 
   /**

@@ -25,6 +25,7 @@ import { AppComponent } from './app.component';
 import { FormComponent } from './form/form.component';
 import { ListComponent } from './list/list.component';
 import { StatsComponent } from './stats/stats.component';
+import { StatsDetailsComponent } from './stats-details/stats-details.component';
 
 
 @NgModule({
@@ -34,6 +35,7 @@ import { StatsComponent } from './stats/stats.component';
     TagifyComponent,
     ListComponent,
     StatsComponent,
+    StatsDetailsComponent,
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebase),
