@@ -7,7 +7,7 @@
   <ng-container matColumnDef="activities">
     <th mat-header-cell *matHeaderCellDef>Activities</th>
     <td mat-cell *matCellDef="let element">
-      {{element.activities.join(", ")}}
+      {{element.activities?.join(", ")}}
     </td>
   </ng-container>
 
