@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 
 import { AngularFirestore, AngularFirestoreDocument, DocumentChangeAction, DocumentReference, DocumentSnapshot } from '@angular/fire/firestore';
-import { forkJoin, Observable } from 'rxjs';
+import { from, forkJoin, Observable } from 'rxjs';
+import { concat, first, map, mergeMap, concatAll } from 'rxjs/operators';
 
 export interface Emotion { id?: string, name: string };
 export interface Activity { id?: string, count: number };
@@ -43,6 +44,22 @@ export class FirebaseService {
   getRecentEntries(limit = 50): Observable<Entry[]> {
     return this.db.collection("entries", ref => ref.orderBy("createdAt", "desc").limit(limit))
       .valueChanges() as Observable<Entry[]>;
+  }
+
+  /**
+   * Get a limited sequence of recent entries, and possibly include stats
+   * information for an analysis with the ID `statsId`.
+   */
+  getRecentEntriesWithStats(limit = 50, statsId: string = null): Observable<{entry: Entry, stats: any}> {
+    const entrySnapshots = this.db.collection("entries", ref => ref.orderBy("createdAt", "desc").limit(limit))
+      .snapshotChanges().pipe(first(), concatAll()) as Observable<DocumentChangeAction<Entry>>;
+
+    return entrySnapshots.pipe(mergeMap(entrySnapshot => {
+      // Get associated stat.
+      return this.db.collection("entries").doc(entrySnapshot.payload.doc.id)
+        .collection("stats").doc(statsId).get().pipe(map(x => x.data()));
+    },
+    (entrySnapshot, statDoc) => ({entry: entrySnapshot.payload.doc.data(), stats: statDoc})));
   }
 
   getEntriesById(...ids: string[]): Observable<Entry[]> {

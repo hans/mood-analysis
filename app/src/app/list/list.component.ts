@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Entry, FirebaseService } from '../services/firebase.service';
 
+import { forkJoin } from 'rxjs';
+import { concat, toArray } from 'rxjs/operators';
+
+import * as _ from 'lodash';
+
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
@@ -8,15 +13,20 @@ import { Entry, FirebaseService } from '../services/firebase.service';
 })
 export class ListComponent implements OnInit {
 
-  entries: Entry[];
-  displayedColumns = ["createdAt", "activities"];
+  entryData: {entry: Entry, stats: any}[];
+  entryStats: [{pca: [number]}];
+  displayedColumns = ["createdAt", "pca1", "activities"];
+
+  // TODO make this configurable
+  activeStat? = "3mPNep3p4vuiPJvBkCiU";
 
   constructor(private firebase: FirebaseService) { }
 
   ngOnInit(): void {
-    this.firebase.getRecentEntries().subscribe((entries) => {
-      this.entries = entries;
-    })
+    const entriesStream = this.firebase.getRecentEntriesWithStats(50, this.activeStat);
+    entriesStream.pipe(toArray()).subscribe((data) => {
+      this.entryData = data;
+    });
   }
 
 }
