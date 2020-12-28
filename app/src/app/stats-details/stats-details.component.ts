@@ -64,13 +64,16 @@ export class StatsDetailsComponent implements OnInit {
 
   renderChart() {
     const width = 400, height = 400;
+    const margin = {top: 20, right: 80, bottom: 30, left: 150};
     const data = this.chartData.sort((a, b) => a.datetime.getTime() - b.datetime.getTime());
 
     let svg = d3.select("#chart").append("svg")
-      .attr("width", width)
-      .attr("height", height);
+      .attr("id", "chart-pca")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
 
     let g = svg.append("g")
+      .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
     console.log(data);
     let x = d3.scaleTime()
@@ -81,17 +84,53 @@ export class StatsDetailsComponent implements OnInit {
       .domain(d3.extent(data, (d) => d.y))
       .range([0, height]);
 
-    svg.append("g").call(d3.axisLeft(y));
-    svg.append("g").call(d3.axisBottom(x).tickFormat(d3.timeFormat("%m-%d")));
+    // Axes
 
-    let line = svg.append("path")
+    const xAxis = d3.axisBottom(x).tickFormat(d3.timeFormat("%m-%d"));
+    const yAxis = d3.axisLeft(y);
+
+    g.append("g")
+      .call(yAxis)
+      .append("text")
+      .attr("transform", "rotate(-90)")
+      .style("text-anchor", "end")
+      .text("PCA dim 1");
+
+    g.append("g")
+      .attr("class", "x axis")
+      .attr("transform", `translate(0, ${height})`)
+      .call(xAxis);
+
+    // X grid lines
+    g.append("g")
+      .attr("class", "grid")
+      .attr("transform", `translate(0, ${height})`)
+      .call(d3.axisBottom(x).ticks(5).tickSize(-height).tickFormat(<null>""))
+
+    // Y grid lines
+    g.append("g")
+      .attr("class", "grid")
+      .call(d3.axisLeft(y).ticks(5).tickSize(-width).tickFormat(<null>""))
+
+    let line = g.append("path")
       .datum(data)
-      .attr("fill", "none")
-      .attr("stroke", "steelblue")
-      .attr("stroke-width", 1.5)
+      .attr("class", "line")
       .attr("d", <any>d3.line()
         .x(d => x((d as unknown as ChartDataItem).datetime))
         .y(d => y((d as unknown as ChartDataItem).y)));
+
+    // Overlay for catching mouseover
+    g.append("rect")
+      .attr("class", "overlay")
+      .attr("width", width)
+      .attr("height", height)
+      .on("mousemove", mousemove);
+
+    function mousemove() {
+      //const x0 = x.invert(d3.pointer(this)[0]);
+      console.log(d3.pointer(this));
+    }
+
     // nv.addGraph(() => {
     //   var chart = nv.models.lineChart();
     //

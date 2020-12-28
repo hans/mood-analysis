@@ -14,3 +14,21 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .activity-picker .activity-picker-count:before {
   content: " × ";
 }
+
+app-stats-details #chart-pca .line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 2.5px;
+}
+
+app-stats-details #chart-pca .grid .tick {
+  stroke: #fff;
+  color: #fff;
+  stroke-opacity: 1;
+  stroke-width: 2px;
+  shape-rendering: crispEdges;
+}
+
+app-stats-details #chart-pca .grid path { stroke-width: 0; }
+
+app-stats-details #chart-pca .overlay { fill: none; pointer-events: all; }
