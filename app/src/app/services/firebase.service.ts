@@ -89,7 +89,7 @@ export class FirebaseService {
    * @param entryData Maps entry document IDs to arbitrary result blobs
    */
   async addStat(stat: Stat, entryData?: Record<string, any>) {
-    this.db.collection("stats").add(stat);
+    const statRef = await this.db.collection("stats").add(stat);
 
     if (entryData) {
       Object.entries(entryData).forEach(el => {
@@ -98,7 +98,7 @@ export class FirebaseService {
         let docUpdate = {};
         docUpdate[stat.type] = docStats;
         console.log("docStats", docStats);
-        this.db.collection("entries").doc(id).collection("stats").add(docUpdate);
+        this.db.collection("entries").doc(id).collection("stats").doc(statRef.id).set(docUpdate);
       });
     }
   }
