@@ -1,11 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { Chart, ChartDataSets, ChartOptions, TimeUnit } from 'chart.js';
-import * as pluginZoom from 'chartjs-plugin-zoom';
-import { Color, Label } from 'ng2-charts';
 import * as _ from 'lodash';
-import Matrix from 'ml-matrix';
 import { first } from 'rxjs/operators';
 
 import { Entry, FirebaseService, Stat } from '../services/firebase.service';
@@ -59,70 +55,7 @@ export class StatsDetailsComponent implements OnInit {
     this.entries = await Promise.all(
       this.pcaRecord.involvedEntries.map(ref => ref.get().then(r => r.data())));
 
-    Chart.pluginService.register(pluginZoom);
     this.chartReady = true;
-  }
-
-  public chartOptions: ChartOptions = {
-    responsive: true,
-    tooltips: {
-      enabled: true,
-      intersect: false
-    },
-    scales: {
-      xAxes: [
-        {
-          type: 'time',
-          time: {
-            unit: <TimeUnit>'day',
-            displayFormats: {
-              day: 'MMM D',
-            }
-          }
-        }
-      ],
-      yAxes: [
-        {
-          ticks: {
-            min: -1,
-            max: 1
-          }
-        }
-      ]
-    },
-    plugins: {
-      zoom: {
-        pan: {
-          enabled: true,
-          mode: 'x'
-        },
-        zoom: {
-          enabled: true
-        }
-      }
-    }
-  };
-
-  public chartColors: Color[] = [
-    { borderColor: 'black', backgroundColor: 'rgba(255, 0, 0, 0.3)' }
-  ];
-
-  get chartData(): ChartDataSets[] {
-    let pcaData = Matrix.from1DArray(
-      this.pcaRecord.involvedEntries.length,
-      this.pcaRecord.emotions.length,
-      this.pcaRecord.projectedData);
-
-    const dataset = _.zip(this.entries, pcaData.to2DArray()).map(el => {
-      const [entry, vector] = el;
-      return {x: (<any>entry.createdAt).toDate(), y: vector[0]};
-    });
-
-    const sortedData = _.orderBy(dataset, el => el.x);
-
-    return [
-      {data: sortedData, label: 'PCA 1'}
-    ];
   }
 
   // renderChart() {

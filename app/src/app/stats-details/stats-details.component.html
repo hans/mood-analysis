@@ -1,7 +1,3 @@
-<div *ngIf="chartReady" id="chart-pca">
-  <canvas baseChart
-    [datasets]="chartData"
-    [options]="chartOptions"
-    chartType="line">
-  </canvas>
+<div *ngIf="chartReady">
+<app-pca-timeseries [record]="pcaRecord" [entries]="entries"></app-pca-timeseries>
 </div>

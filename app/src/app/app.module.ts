@@ -28,6 +28,8 @@ import { FormComponent } from './form/form.component';
 import { ListComponent } from './list/list.component';
 import { StatsComponent } from './stats/stats.component';
 import { StatsDetailsComponent } from './stats-details/stats-details.component';
+import { PcaTimeseriesComponent } from './pca-timeseries/pca-timeseries.component';
+import { PcaScatterComponent } from './pca-scatter/pca-scatter.component';
 
 
 @NgModule({
@@ -38,6 +40,8 @@ import { StatsDetailsComponent } from './stats-details/stats-details.component';
     ListComponent,
     StatsComponent,
     StatsDetailsComponent,
+    PcaTimeseriesComponent,
+    PcaScatterComponent,
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebase),
