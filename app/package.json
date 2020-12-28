@@ -24,6 +24,7 @@
     "@angular/router": "~11.0.3",
     "@yaireo/tagify": "^3.21.5",
     "chart.js": "^2.9.4",
+    "chartjs-plugin-zoom": "^0.7.7",
     "firebase": "^7.0 || ^8.0",
     "lodash": "^4.17.20",
     "ml-matrix": "^6.5.3",

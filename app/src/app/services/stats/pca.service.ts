@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { DocumentReference } from '@angular/fire/firestore';
-import _ from "lodash";
+import * as _ from "lodash";
 
 import { Matrix } from 'ml-matrix';
 import { PCA } from 'ml-pca';

@@ -1,7 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { ChartDataSets, ChartOptions, TimeUnit } from 'chart.js';
+import { Chart, ChartDataSets, ChartOptions, TimeUnit } from 'chart.js';
+import * as pluginZoom from 'chartjs-plugin-zoom';
 import { Color, Label } from 'ng2-charts';
 import * as _ from 'lodash';
 import Matrix from 'ml-matrix';
@@ -58,6 +59,7 @@ export class StatsDetailsComponent implements OnInit {
     this.entries = await Promise.all(
       this.pcaRecord.involvedEntries.map(ref => ref.get().then(r => r.data())));
 
+    Chart.pluginService.register(pluginZoom);
     this.chartReady = true;
   }
 
@@ -87,6 +89,17 @@ export class StatsDetailsComponent implements OnInit {
           }
         }
       ]
+    },
+    plugins: {
+      zoom: {
+        pan: {
+          enabled: true,
+          mode: 'x'
+        },
+        zoom: {
+          enabled: true
+        }
+      }
     }
   };
 
