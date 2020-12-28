@@ -1,1 +1,7 @@
-<div id="chart"><svg></svg></div>
+<div *ngIf="chartReady" id="chart-pca">
+  <canvas baseChart
+    [datasets]="chartData"
+    [options]="chartOptions"
+    chartType="line">
+  </canvas>
+</div>

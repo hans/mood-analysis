@@ -14,6 +14,8 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatTableModule } from '@angular/material/table';
 
+import { ChartsModule } from 'ng2-charts';
+
 import { TagifyComponent } from './tagify/angular-tagify.component';
 
 import { AngularFireModule } from '@angular/fire';
@@ -54,6 +56,9 @@ import { StatsDetailsComponent } from './stats-details/stats-details.component';
     MatSidenavModule,
     MatListModule,
     MatTableModule,
+
+    ChartsModule,
+
     AppRoutingModule,
   ],
   providers: [],
