@@ -20,8 +20,12 @@ export class PcaTimeseriesComponent implements OnInit {
   @Input() entries: Entry[];
   @Input() record: PCARecord;
 
+  chartData: ChartDataSets[];
+
   ngOnInit(): void {
     Chart.pluginService.register(pluginZoom);
+
+    this.chartData = this._chartData();
   }
 
   public chartOptions: ChartOptions = {
@@ -45,8 +49,8 @@ export class PcaTimeseriesComponent implements OnInit {
       yAxes: [
         {
           ticks: {
-            min: -1,
-            max: 1
+            suggestedMin: -2,
+            suggestedMax: 2
           }
         }
       ]
@@ -68,7 +72,7 @@ export class PcaTimeseriesComponent implements OnInit {
     { borderColor: 'black', backgroundColor: 'rgba(255, 0, 0, 0.3)' }
   ];
 
-  get chartData(): ChartDataSets[] {
+  _chartData(): ChartDataSets[] {
     let pcaData = Matrix.from1DArray(
       this.record.involvedEntries.length,
       this.record.emotions.length,
