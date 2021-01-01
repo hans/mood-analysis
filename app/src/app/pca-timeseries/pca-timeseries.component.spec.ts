@@ -8,9 +8,8 @@ describe('PcaTimeseriesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PcaTimeseriesComponent ]
-    })
-    .compileComponents();
+      declarations: [PcaTimeseriesComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

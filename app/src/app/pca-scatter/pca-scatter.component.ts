@@ -12,14 +12,13 @@ import { PCARecord } from '../services/stats/pca.service';
 @Component({
   selector: 'app-pca-scatter',
   templateUrl: './pca-scatter.component.html',
-  styleUrls: ['./pca-scatter.component.css']
+  styleUrls: ['./pca-scatter.component.css'],
 })
 export class PcaScatterComponent implements OnInit {
-
   @Input() record: PCARecord;
   chartData: ChartDataSets[];
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit(): void {
     Chart.pluginService.register(pluginZoom);
@@ -31,7 +30,7 @@ export class PcaScatterComponent implements OnInit {
     responsive: true,
     tooltips: {
       enabled: true,
-      intersect: false
+      intersect: false,
     },
     scales: {
       // xAxes: [
@@ -58,21 +57,22 @@ export class PcaScatterComponent implements OnInit {
       zoom: {
         pan: {
           enabled: true,
-          mode: 'x'
+          mode: 'x',
         },
         zoom: {
-          enabled: true
-        }
-      }
-    }
+          enabled: true,
+        },
+      },
+    },
   };
 
   _chartData(): ChartDataSets[] {
     const pcaLoadings = Matrix.from1DArray(
       this.record.emotions.length,
       this.record.eigenvalues.length,
-      this.record.loadings);
-    const data = pcaLoadings.to2DArray().map((el) => ({x: el[0], y: el[1]}));
+      this.record.loadings,
+    );
+    const data = pcaLoadings.to2DArray().map((el) => ({ x: el[0], y: el[1] }));
     return [{ data: data, label: 'A' }];
   }
 
@@ -97,5 +97,4 @@ export class PcaScatterComponent implements OnInit {
   //     {data: sortedData, label: 'PCA 1'}
   //   ];
   // }
-
 }

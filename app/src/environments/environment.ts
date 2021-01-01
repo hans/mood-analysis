@@ -7,13 +7,13 @@ export const environment = {
 
   // TODO don't store here ..
   firebase: {
-    "apiKey": "AIzaSyAW_6zYywvUy67RXZwGiMZ3R_jsSykygmc",
-    "authDomain": "mood-85e71.firebaseapp.com",
-    "projectId": "mood-85e71",
-    "storageBucket": "mood-85e71.appspot.com",
-    "messagingSenderId": "81154981835",
-    "appId": "1:81154981835:web:712f625042460cd47b004e"
-  }
+    apiKey: 'AIzaSyAW_6zYywvUy67RXZwGiMZ3R_jsSykygmc',
+    authDomain: 'mood-85e71.firebaseapp.com',
+    projectId: 'mood-85e71',
+    storageBucket: 'mood-85e71.appspot.com',
+    messagingSenderId: '81154981835',
+    appId: '1:81154981835:web:712f625042460cd47b004e',
+  },
 };
 
 /*

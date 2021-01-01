@@ -13,10 +13,9 @@ import { PCARecord } from '../services/stats/pca.service';
 @Component({
   selector: 'app-pca-timeseries',
   templateUrl: './pca-timeseries.component.html',
-  styleUrls: ['./pca-timeseries.component.css']
+  styleUrls: ['./pca-timeseries.component.css'],
 })
 export class PcaTimeseriesComponent implements OnInit {
-
   @Input() entries: Entry[];
   @Input() record: PCARecord;
 
@@ -32,7 +31,7 @@ export class PcaTimeseriesComponent implements OnInit {
     responsive: true,
     tooltips: {
       enabled: true,
-      intersect: false
+      intersect: false,
     },
     scales: {
       xAxes: [
@@ -42,52 +41,50 @@ export class PcaTimeseriesComponent implements OnInit {
             unit: <TimeUnit>'day',
             displayFormats: {
               day: 'MMM D',
-            }
-          }
-        }
+            },
+          },
+        },
       ],
       yAxes: [
         {
           ticks: {
             suggestedMin: -2,
-            suggestedMax: 2
-          }
-        }
-      ]
+            suggestedMax: 2,
+          },
+        },
+      ],
     },
     plugins: {
       zoom: {
         pan: {
           enabled: true,
-          mode: 'x'
+          mode: 'x',
         },
         zoom: {
-          enabled: true
-        }
-      }
-    }
+          enabled: true,
+        },
+      },
+    },
   };
 
   public chartColors: Color[] = [
-    { borderColor: 'black', backgroundColor: 'rgba(255, 0, 0, 0.3)' }
+    { borderColor: 'black', backgroundColor: 'rgba(255, 0, 0, 0.3)' },
   ];
 
   _chartData(): ChartDataSets[] {
-    let pcaData = Matrix.from1DArray(
+    const pcaData = Matrix.from1DArray(
       this.record.involvedEntries.length,
       this.record.emotions.length,
-      this.record.projectedData);
+      this.record.projectedData,
+    );
 
-    const dataset = _.zip(this.entries, pcaData.to2DArray()).map(el => {
+    const dataset = _.zip(this.entries, pcaData.to2DArray()).map((el) => {
       const [entry, vector] = el;
-      return {x: (<any>entry.createdAt).toDate(), y: vector[0]};
+      return { x: (<any>entry.createdAt).toDate(), y: vector[0] };
     });
 
-    const sortedData = _.orderBy(dataset, el => el.x);
+    const sortedData = _.orderBy(dataset, (el) => el.x);
 
-    return [
-      {data: sortedData, label: 'PCA 1'}
-    ];
+    return [{ data: sortedData, label: 'PCA 1' }];
   }
-
 }

@@ -1,15 +1,27 @@
 import { Injectable } from '@angular/core';
 
-import { AngularFirestore, AngularFirestoreDocument, DocumentChangeAction, DocumentReference, DocumentSnapshot } from '@angular/fire/firestore';
+import {
+  AngularFirestore,
+  AngularFirestoreDocument,
+  DocumentChangeAction,
+  DocumentReference,
+  DocumentSnapshot,
+} from '@angular/fire/firestore';
 import { from, forkJoin, Observable } from 'rxjs';
 import { concat, first, map, mergeMap, concatAll } from 'rxjs/operators';
 
-export interface Emotion { id?: string, name: string };
-export interface Activity { id?: string, count: number };
+export interface Emotion {
+  id?: string;
+  name: string;
+}
+export interface Activity {
+  id?: string;
+  count: number;
+}
 export interface Entry {
-  createdAt: Date,
-  emotions: Record<string, number>,
-  activities: string[]
+  createdAt: Date;
+  emotions: Record<string, number>;
+  activities: string[];
 }
 
 export interface Stat {
@@ -18,31 +30,37 @@ export interface Stat {
   data: any;
 }
 
-
 @Injectable({
-  providedIn: "root"
+  providedIn: 'root',
 })
 export class FirebaseService {
-
-  constructor(public db: AngularFirestore) { }
+  constructor(public db: AngularFirestore) {}
 
   get emotions() {
-    return this.db.collection("emotions")
-      .snapshotChanges() as Observable<DocumentChangeAction<Emotion>[]>;
+    return this.db.collection('emotions').snapshotChanges() as Observable<
+      DocumentChangeAction<Emotion>[]
+    >;
   }
 
   get activities() {
-    return this.db.collection("activities")
-      .snapshotChanges() as Observable<DocumentChangeAction<Activity>[]>;
+    return this.db.collection('activities').snapshotChanges() as Observable<
+      DocumentChangeAction<Activity>[]
+    >;
   }
 
   getFrequentActivities(limit = 20) {
-    return this.db.collection("activities", ref => ref.orderBy("count", "desc").limit(limit))
+    return this.db
+      .collection('activities', (ref) =>
+        ref.orderBy('count', 'desc').limit(limit),
+      )
       .snapshotChanges() as Observable<DocumentChangeAction<Activity>[]>;
   }
 
   getRecentEntries(limit = 50): Observable<Entry[]> {
-    return this.db.collection("entries", ref => ref.orderBy("createdAt", "desc").limit(limit))
+    return this.db
+      .collection('entries', (ref) =>
+        ref.orderBy('createdAt', 'desc').limit(limit),
+      )
       .valueChanges() as Observable<Entry[]>;
   }
 
@@ -50,33 +68,59 @@ export class FirebaseService {
    * Get a limited sequence of recent entries, and possibly include stats
    * information for an analysis with the ID `statsId`.
    */
-  getRecentEntriesWithStats(limit = 50, statsId: string = null): Observable<{entry: Entry, stats: any}> {
-    const entrySnapshots = this.db.collection("entries", ref => ref.orderBy("createdAt", "desc").limit(limit))
-      .snapshotChanges().pipe(first(), concatAll()) as Observable<DocumentChangeAction<Entry>>;
+  getRecentEntriesWithStats(
+    limit = 50,
+    statsId: string = null,
+  ): Observable<{ entry: Entry; stats: any }> {
+    const entrySnapshots = this.db
+      .collection('entries', (ref) =>
+        ref.orderBy('createdAt', 'desc').limit(limit),
+      )
+      .snapshotChanges()
+      .pipe(first(), concatAll()) as Observable<DocumentChangeAction<Entry>>;
 
-    return entrySnapshots.pipe(mergeMap(entrySnapshot => {
-      // Get associated stat.
-      return this.db.collection("entries").doc(entrySnapshot.payload.doc.id)
-        .collection("stats").doc(statsId).get().pipe(map(x => x.data()));
-    },
-    (entrySnapshot, statDoc) => ({entry: entrySnapshot.payload.doc.data(), stats: statDoc})));
+    return entrySnapshots.pipe(
+      mergeMap(
+        (entrySnapshot) => {
+          // Get associated stat.
+          return this.db
+            .collection('entries')
+            .doc(entrySnapshot.payload.doc.id)
+            .collection('stats')
+            .doc(statsId)
+            .get()
+            .pipe(map((x) => x.data()));
+        },
+        (entrySnapshot, statDoc) => ({
+          entry: entrySnapshot.payload.doc.data(),
+          stats: statDoc,
+        }),
+      ),
+    );
   }
 
   getEntriesById(...ids: string[]): Observable<Entry[]> {
     return forkJoin(
-      ids.map(id => this.db.collection("entries").doc(id).valueChanges() as Observable<Entry>));
+      ids.map(
+        (id) =>
+          this.db
+            .collection('entries')
+            .doc(id)
+            .valueChanges() as Observable<Entry>,
+      ),
+    );
   }
 
   /**
    * Retrieve an activity document, creating if necessary.
    */
   async getActivity(name: string): Promise<AngularFirestoreDocument> {
-    let doc = this.db.collection("activities").doc(name);
+    const doc = this.db.collection('activities').doc(name);
 
-    let docSnapshot = await doc.get().toPromise();
+    const docSnapshot = await doc.get().toPromise();
     if (!(docSnapshot && docSnapshot.exists)) {
       // Create the document
-      doc.set({createdAt: new Date()});
+      doc.set({ createdAt: new Date() });
     }
 
     return doc;
@@ -89,15 +133,16 @@ export class FirebaseService {
     // TODO run this in a transaction?
     // Get documents for each activity
     entry.activities.forEach((activity: string) => {
-      var activityDoc: AngularFirestoreDocument<Activity> =
-        this.db.collection("activities").doc(activity);
-      activityDoc.get().subscribe(doc => {
-        var count = doc.exists ? doc.data().count || 0 : 0;
-        activityDoc.set({count: count + 1}, {merge: true});
-      })
+      const activityDoc: AngularFirestoreDocument<Activity> = this.db
+        .collection('activities')
+        .doc(activity);
+      activityDoc.get().subscribe((doc) => {
+        const count = doc.exists ? doc.data().count || 0 : 0;
+        activityDoc.set({ count: count + 1 }, { merge: true });
+      });
     });
 
-    this.db.collection("entries").add(entry);
+    this.db.collection('entries').add(entry);
   }
 
   /**
@@ -106,18 +151,22 @@ export class FirebaseService {
    * @param entryData Maps entry document IDs to arbitrary result blobs
    */
   async addStat(stat: Stat, entryData?: Record<string, any>) {
-    const statRef = await this.db.collection("stats").add(stat);
+    const statRef = await this.db.collection('stats').add(stat);
 
     if (entryData) {
-      Object.entries(entryData).forEach(el => {
-        let [id, docStats] = el;
+      Object.entries(entryData).forEach((el) => {
+        const [id, docStats] = el;
 
-        let docUpdate = {};
+        const docUpdate = {};
         docUpdate[stat.type] = docStats;
-        console.log("docStats", docStats);
-        this.db.collection("entries").doc(id).collection("stats").doc(statRef.id).set(docUpdate);
+        console.log('docStats', docStats);
+        this.db
+          .collection('entries')
+          .doc(id)
+          .collection('stats')
+          .doc(statRef.id)
+          .set(docUpdate);
       });
     }
   }
-
 }

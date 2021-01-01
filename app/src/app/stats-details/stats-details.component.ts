@@ -7,14 +7,12 @@ import { first } from 'rxjs/operators';
 import { Entry, FirebaseService, Stat } from '../services/firebase.service';
 import { PCARecord } from '../services/stats/pca.service';
 
-
 @Component({
   selector: 'app-stats-details',
   templateUrl: './stats-details.component.html',
-  styleUrls: ['./stats-details.component.css']
+  styleUrls: ['./stats-details.component.css'],
 })
 export class StatsDetailsComponent implements OnInit {
-
   @Input() private id: string;
 
   stat: Stat;
@@ -24,8 +22,7 @@ export class StatsDetailsComponent implements OnInit {
 
   chartReady = false;
 
-  constructor(private route: ActivatedRoute,
-              private fb: FirebaseService) { }
+  constructor(private route: ActivatedRoute, private fb: FirebaseService) {}
 
   async ngOnInit(): Promise<void> {
     if (!this.id) {
@@ -33,8 +30,13 @@ export class StatsDetailsComponent implements OnInit {
         this.id = this.route.snapshot.params.id;
       } else {
         // Get most recent analysis.
-        const query = this.fb.db.collection("stats", ref => ref.orderBy("createdAt", "desc").limit(1))
-        const statSnapshot = await query.snapshotChanges().pipe(first()).toPromise();
+        const query = this.fb.db.collection('stats', (ref) =>
+          ref.orderBy('createdAt', 'desc').limit(1),
+        );
+        const statSnapshot = await query
+          .snapshotChanges()
+          .pipe(first())
+          .toPromise();
         if (!statSnapshot) {
           // TODO handle no stats
         }
@@ -45,7 +47,12 @@ export class StatsDetailsComponent implements OnInit {
     }
 
     if (!this.stat) {
-      this.stat = (await this.fb.db.collection("stats").doc(this.id).valueChanges().pipe(first()).toPromise()) as Stat;
+      this.stat = (await this.fb.db
+        .collection('stats')
+        .doc(this.id)
+        .valueChanges()
+        .pipe(first())
+        .toPromise()) as Stat;
     }
 
     // TODO assumes PCA stats
@@ -53,7 +60,10 @@ export class StatsDetailsComponent implements OnInit {
 
     // Load associated entries.
     this.entries = await Promise.all(
-      this.pcaRecord.involvedEntries.map(ref => ref.get().then(r => r.data())));
+      this.pcaRecord.involvedEntries.map((ref) =>
+        ref.get().then((r) => r.data()),
+      ),
+    );
 
     this.chartReady = true;
   }
@@ -127,21 +137,20 @@ export class StatsDetailsComponent implements OnInit {
   //     console.log(d3.pointer(this));
   //   }
 
-    // nv.addGraph(() => {
-    //   var chart = nv.models.lineChart();
-    //
-    //   chart.xAxis
-    //     .axisLabel("Date");
-    //
-    //   chart.yAxis
-    //     .axisLabel("PCA 1");
-    //
-    //   d3.select("#chart svg")
-    //     .datum(this.chartData)
-    //     .call(chart);
-    //
-    //   return chart;
-    // })
+  // nv.addGraph(() => {
+  //   var chart = nv.models.lineChart();
+  //
+  //   chart.xAxis
+  //     .axisLabel("Date");
+  //
+  //   chart.yAxis
+  //     .axisLabel("PCA 1");
+  //
+  //   d3.select("#chart svg")
+  //     .datum(this.chartData)
+  //     .call(chart);
+  //
+  //   return chart;
+  // })
   // }
-
 }

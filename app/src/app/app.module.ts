@@ -31,7 +31,6 @@ import { StatsDetailsComponent } from './stats-details/stats-details.component';
 import { PcaTimeseriesComponent } from './pca-timeseries/pca-timeseries.component';
 import { PcaScatterComponent } from './pca-scatter/pca-scatter.component';
 
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -66,6 +65,6 @@ import { PcaScatterComponent } from './pca-scatter/pca-scatter.component';
     AppRoutingModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

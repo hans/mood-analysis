@@ -1,5 +1,13 @@
-import {AfterViewInit, Component, EventEmitter, forwardRef, Input, Output, ViewChild} from '@angular/core';
-import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {
+  AfterViewInit,
+  Component,
+  EventEmitter,
+  forwardRef,
+  Input,
+  Output,
+  ViewChild,
+} from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import * as Tagify from '@yaireo/tagify';
 import { TagifyService } from './angular-tagify.service';
 
@@ -13,8 +21,8 @@ export interface SettingsModel {
   duplicates?: boolean;
   enforceWhitelist?: boolean;
   autoComplete?: {
-      enabled?: boolean;
-      rightKey?: boolean;
+    enabled?: boolean;
+    rightKey?: boolean;
   };
   whitelist?: string[] | Object[];
   blacklist?: string[] | Object[];
@@ -23,10 +31,10 @@ export interface SettingsModel {
   maxTags?: number;
   editTags?: number;
   templates?: {
-      wrapper?: Function;
-      tag?: Function;
-      dropdownItem?: Function;
-      dropdownItemNoMatch?: Function;
+    wrapper?: Function;
+    tag?: Function;
+    dropdownItem?: Function;
+    dropdownItemNoMatch?: Function;
   };
   transformTag?: Function;
   keepInvalidTags?: boolean;
@@ -34,44 +42,44 @@ export interface SettingsModel {
   backspace?: any;
   originalInputValueFormat?: Function;
   dropdown?: {
-      enabled?: number | false;
-      caseSensitive?: boolean;
-      maxItems?: number;
-      classname?: string;
-      fuzzySearch?: boolean;
-      accentedSearch?: boolean;
-      position?: string;
-      highlightFirst?: boolean;
-      closeOnSelect?: boolean;
-      mapValueTo?: string | Function;
-      searchKeys?: string[];
-      appendTarget?: any;
+    enabled?: number | false;
+    caseSensitive?: boolean;
+    maxItems?: number;
+    classname?: string;
+    fuzzySearch?: boolean;
+    accentedSearch?: boolean;
+    position?: string;
+    highlightFirst?: boolean;
+    closeOnSelect?: boolean;
+    mapValueTo?: string | Function;
+    searchKeys?: string[];
+    appendTarget?: any;
   };
 }
 
 @Component({
   selector: 'tagify',
-  template: `<input *ngIf="settings" #tagifyInputRef/>`,
+  template: `<input *ngIf="settings" #tagifyInputRef />`,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => TagifyComponent),
-      multi: true
-    }
-  ]
+      multi: true,
+    },
+  ],
 })
 export class TagifyComponent implements AfterViewInit, ControlValueAccessor {
   @Output() add = new EventEmitter(); // returns the added tag + updated tags list
   @Output() remove = new EventEmitter(); // returns the updated tags list
   @Input() settings: SettingsModel; // get possible tagify settings
-  @Input() value: string | Array<string>
+  @Input() value: string | Array<string>;
 
   @ViewChild('tagifyInputRef') tagifyInputRef: any;
 
   private onChange: any = null;
   private onTouched: any = null;
 
-  constructor(private tagifyService: TagifyService) { }
+  constructor(private tagifyService: TagifyService) {}
   private tagify;
 
   ngAfterViewInit() {
@@ -82,21 +90,22 @@ export class TagifyComponent implements AfterViewInit, ControlValueAccessor {
       add: () => {
         this.add.emit({
           tags: this.tagify.value,
-          added: this.tagify.value[this.tagify.value.length - 1]
+          added: this.tagify.value[this.tagify.value.length - 1],
         });
 
-        if (this.onChange !== null)
-          this.onChange(this.tagify.value);
+        if (this.onChange !== null) this.onChange(this.tagify.value);
       },
       remove: () => {
         this.remove.emit(this.tagify.value);
 
-        if (this.onChange !== null)
-          this.onChange(this.tagify.value);
-      }
+        if (this.onChange !== null) this.onChange(this.tagify.value);
+      },
     };
 
-    this.tagify = this.tagifyService.getTagifyRef(this.tagifyInputRef.nativeElement, this.settings);
+    this.tagify = this.tagifyService.getTagifyRef(
+      this.tagifyInputRef.nativeElement,
+      this.settings,
+    );
 
     if (this.value) {
       const value = this.value;
@@ -105,9 +114,9 @@ export class TagifyComponent implements AfterViewInit, ControlValueAccessor {
   }
 
   ngOnChanges({ value }) {
-    if(!this.tagify) return
+    if (!this.tagify) return;
     if (!value.previousValue) {
-      this.tagify.loadOriginalValues(value.currentValue)
+      this.tagify.loadOriginalValues(value.currentValue);
     }
   }
 
@@ -133,8 +142,7 @@ export class TagifyComponent implements AfterViewInit, ControlValueAccessor {
   }
 
   writeValue(value) {
-    if (value == null)
-      return;
+    if (value == null) return;
     this.value = value;
 
     if (!this.tagify)

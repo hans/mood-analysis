@@ -1,12 +1,11 @@
-import {ElementRef, Injectable} from '@angular/core';
+import { ElementRef, Injectable } from '@angular/core';
 import * as Tagify from '@yaireo/tagify';
 import { SettingsModel } from './angular-tagify.component';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TagifyService {
-
   private tagify: Tagify;
 
   constructor() {}
@@ -17,7 +16,7 @@ export class TagifyService {
   getTagifyRef(tagifyInputRef: ElementRef, settings: SettingsModel) {
     if (arguments.length === 0) return;
     if (this.tagify) return this.tagify;
-    this.tagify = new Tagify( tagifyInputRef, settings);
+    this.tagify = new Tagify(tagifyInputRef, settings);
     return this.tagify;
   }
 

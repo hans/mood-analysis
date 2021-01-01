@@ -8,9 +8,8 @@ describe('PcaScatterComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PcaScatterComponent ]
-    })
-    .compileComponents();
+      declarations: [PcaScatterComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
