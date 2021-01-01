@@ -87,7 +87,7 @@ export class PcaTimeseriesComponent implements OnInit {
 
       const dataset = {
         data: _.orderBy(componentData, (el) => el.x),
-        label: `PCA ${idx+1}`,
+        label: `PCA ${idx + 1}`,
       };
 
       return dataset;
