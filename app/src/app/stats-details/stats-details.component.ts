@@ -13,12 +13,19 @@ import { PCARecord } from '../services/stats/pca.service';
   styleUrls: ['./stats-details.component.css'],
 })
 export class StatsDetailsComponent implements OnInit {
-  @Input() private id: string;
+  @Input() id: string;
 
   stat: Stat;
 
   pcaRecord?: PCARecord;
   entries: Entry[];
+
+  numComponents = 2;
+  statCreated: Date;
+  firstEntryDate: Date;
+  lastEntryDate: Date;
+  explainedVariance: number[];
+  totalExplainedVariance: number;
 
   chartReady = false;
 
@@ -55,6 +62,10 @@ export class StatsDetailsComponent implements OnInit {
         .toPromise()) as Stat;
     }
 
+    this.reload();
+  }
+
+  async reload(): Promise<void> {
     // TODO assumes PCA stats
     this.pcaRecord = this.stat.data as PCARecord;
 
@@ -64,6 +75,19 @@ export class StatsDetailsComponent implements OnInit {
         ref.get().then((r) => r.data()),
       ),
     );
+
+    this.statCreated = this.stat.createdAt;
+    this.firstEntryDate = _.min(
+      this.entries.map((e) => (<any>e.createdAt).toDate()),
+    );
+    this.lastEntryDate = _.max(
+      this.entries.map((e) => (<any>e.createdAt).toDate()),
+    );
+    this.explainedVariance = _.take(
+      this.pcaRecord.explainedVariance,
+      this.numComponents,
+    ).map((v) => v * 100);
+    this.totalExplainedVariance = _.sum(this.explainedVariance);
 
     this.chartReady = true;
   }

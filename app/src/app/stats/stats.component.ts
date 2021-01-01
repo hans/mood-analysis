@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 
+import { Stat } from '../services/firebase.service';
 import { PCAService } from '../services/stats/pca.service';
 import { StatsDetailsComponent } from '../stats-details/stats-details.component';
 
@@ -17,9 +18,13 @@ export class StatsComponent implements OnInit {
   ngOnInit(): void {}
 
   runPCA(): void {
-    this.pca.run().then(() => {
+    this.pca.run().then((stat: Stat) => {
+      console.log('cb');
+
+      this.details.stat = stat;
+      this.details.id = stat.id;
       // Reload details component.
-      this.details.ngOnInit();
+      this.details.reload();
     });
   }
 }

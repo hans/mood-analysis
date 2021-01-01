@@ -1,4 +1,10 @@
 <div *ngIf="chartReady">
-<app-pca-timeseries [record]="pcaRecord" [entries]="entries"></app-pca-timeseries>
-<app-pca-scatter [record]="pcaRecord"></app-pca-scatter>
+  <ul class="stats-details">
+    <li><strong>Created at:</strong> {{stat.createdAt.toDate() | date: 'yyyy-MM-dd HH:mm'}}</li>
+    <li><strong>Involved entries:</strong> {{firstEntryDate | date: 'yyyy-MM-dd HH:mm'}} &mdash; {{lastEntryDate | date: 'yyyy-MM-dd HH:mm'}}</li>
+    <li><strong>Explained variance:</strong> {{explainedVariance.join(", ")}} (total {{totalExplainedVariance}}%)</li>
+  </ul>
+
+  <app-pca-timeseries [record]="pcaRecord" [entries]="entries" [numComponents]="numComponents"></app-pca-timeseries>
+  <app-pca-scatter [record]="pcaRecord"></app-pca-scatter>
 </div>

@@ -150,23 +150,28 @@ export class FirebaseService {
    *
    * @param entryData Maps entry document IDs to arbitrary result blobs
    */
-  async addStat(stat: Stat, entryData?: Record<string, any>): Promise<void> {
+  async addStat(stat: Stat, entryData?: Record<string, any>): Promise<Stat> {
     const statRef = await this.db.collection('stats').add(stat);
+    const ret = { ...stat, ...{ id: statRef.id } };
 
     if (entryData) {
-      Object.entries(entryData).forEach((el) => {
+      const entryStatOps = Object.entries(entryData).map((el) => {
         const [id, docStats] = el;
 
         const docUpdate = {};
         docUpdate[stat.type] = docStats;
         console.log('docStats', docStats);
-        this.db
+        return this.db
           .collection('entries')
           .doc(id)
           .collection('stats')
           .doc(statRef.id)
           .set(docUpdate);
       });
+
+      await forkJoin(entryStatOps).toPromise();
     }
+
+    return ret;
   }
 }
