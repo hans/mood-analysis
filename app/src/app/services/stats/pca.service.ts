@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import * as firestore from '@angular/fire/firestore';
+import { Timestamp } from '@firebase/firestore-types';
 import * as _ from 'lodash';
 
 import { Matrix } from 'ml-matrix';
@@ -96,7 +97,11 @@ export class PCAService {
               ),
             );
 
-            const stat = { type: 'pca', createdAt: new Date(), data: record };
+            const stat = {
+              type: 'pca',
+              createdAt: this.fb.now(),
+              data: record,
+            };
             this.fb.addStat(stat, entryStats).then((stat) => resolve(stat));
           },
         );

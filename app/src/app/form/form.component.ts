@@ -5,7 +5,7 @@ import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { SettingsModel } from '../tagify/angular-tagify.component';
 import { TagifyService } from '../tagify/angular-tagify.service';
 
-import { FirebaseService } from '../services/firebase.service';
+import { FirebaseService, Timestamp } from '../services/firebase.service';
 import { Router } from '@angular/router';
 
 export interface Emotion {
@@ -100,7 +100,7 @@ export class FormComponent implements OnInit {
     const entry = {
       activities: activities,
       emotions: emotions,
-      createdAt: new Date(),
+      createdAt: this.firebase.now(),
     };
     this.firebase.addEntry(entry).then(() => {
       this.router.navigate(['/list']);

@@ -22,6 +22,7 @@
     "@angular/platform-browser": "~11.0.3",
     "@angular/platform-browser-dynamic": "~11.0.3",
     "@angular/router": "~11.0.3",
+    "@firebase/firestore-types": "^2.1.0",
     "@yaireo/tagify": "^3.21.5",
     "chart.js": "^2.9.4",
     "chartjs-plugin-zoom": "^0.7.7",

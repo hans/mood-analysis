@@ -1,8 +1,14 @@
 import { Injectable } from '@angular/core';
 
 import * as firestore from '@angular/fire/firestore';
+import * as firebase from 'firebase';
 import { forkJoin, Observable } from 'rxjs';
 import { first, map, mergeMap, concatAll } from 'rxjs/operators';
+
+// Grr can't get this import to work..
+export interface Timestamp {
+  toDate(): Date;
+}
 
 export interface Emotion extends firestore.DocumentData {
   id?: string;
@@ -13,13 +19,13 @@ export interface Activity extends firestore.DocumentData {
   count: number;
 }
 export interface Entry extends firestore.DocumentData {
-  createdAt: Date;
+  createdAt: Timestamp;
   emotions: Record<string, number>;
   activities: string[];
 }
 
 export interface Stat extends firestore.DocumentData {
-  createdAt: Date;
+  createdAt: Timestamp;
   type: string;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -31,6 +37,10 @@ export interface Stat extends firestore.DocumentData {
 })
 export class FirebaseService {
   constructor(public db: firestore.AngularFirestore) {}
+
+  now(): Timestamp {
+    return (firebase.default.firestore.FieldValue.serverTimestamp() as unknown) as Timestamp;
+  }
 
   get emotions(): Observable<firestore.DocumentChangeAction<Emotion>[]> {
     return this.db.collection('emotions').snapshotChanges() as Observable<

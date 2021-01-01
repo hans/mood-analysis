@@ -21,10 +21,8 @@ export class StatsComponent implements OnInit {
     this.pca.run().then((stat: Stat) => {
       console.log('cb');
 
-      this.details.stat = stat;
-      this.details.id = stat.id;
       // Reload details component.
-      this.details.reload();
+      this.details.id = stat.id;
     });
   }
 }

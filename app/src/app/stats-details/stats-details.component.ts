@@ -76,13 +76,9 @@ export class StatsDetailsComponent implements OnInit {
       ),
     );
 
-    this.statCreated = this.stat.createdAt;
-    this.firstEntryDate = _.min(
-      this.entries.map((e) => (<any>e.createdAt).toDate()),
-    );
-    this.lastEntryDate = _.max(
-      this.entries.map((e) => (<any>e.createdAt).toDate()),
-    );
+    console.log(this.stat.createdAt);
+    this.firstEntryDate = _.min(this.entries.map((e) => e.createdAt.toDate()));
+    this.lastEntryDate = _.max(this.entries.map((e) => e.createdAt.toDate()));
     this.explainedVariance = _.take(
       this.pcaRecord.explainedVariance,
       this.numComponents,
