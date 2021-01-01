@@ -18,6 +18,7 @@ import { PCARecord } from '../services/stats/pca.service';
 export class PcaTimeseriesComponent implements OnInit {
   @Input() entries: Entry[];
   @Input() record: PCARecord;
+  @Input() numComponents = 2;
 
   chartData: ChartDataSets[];
 
@@ -72,19 +73,26 @@ export class PcaTimeseriesComponent implements OnInit {
   ];
 
   _chartData(): ChartDataSets[] {
-    const pcaData = Matrix.from1DArray(
+    const pcaData: number[][] = Matrix.from1DArray(
       this.record.involvedEntries.length,
       this.record.emotions.length,
       this.record.projectedData,
-    );
+    ).to2DArray();
 
-    const dataset = _.zip(this.entries, pcaData.to2DArray()).map((el) => {
-      const [entry, vector] = el;
-      return { x: (<any>entry.createdAt).toDate(), y: vector[0] };
+    const datasets = _.range(this.numComponents).map((idx) => {
+      const componentData = _.zip(this.entries, pcaData).map((el) => {
+        const [entry, vector] = el;
+        return { x: (<any>entry.createdAt).toDate(), y: vector[idx] };
+      });
+
+      const dataset = {
+        data: _.orderBy(componentData, (el) => el.x),
+        label: `PCA ${idx+1}`,
+      };
+
+      return dataset;
     });
 
-    const sortedData = _.orderBy(dataset, (el) => el.x);
-
-    return [{ data: sortedData, label: 'PCA 1' }];
+    return datasets;
   }
 }
