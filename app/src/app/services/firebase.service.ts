@@ -1,32 +1,28 @@
 import { Injectable } from '@angular/core';
 
-import {
-  AngularFirestore,
-  AngularFirestoreDocument,
-  DocumentChangeAction,
-  DocumentReference,
-  DocumentSnapshot,
-} from '@angular/fire/firestore';
-import { from, forkJoin, Observable } from 'rxjs';
-import { concat, first, map, mergeMap, concatAll } from 'rxjs/operators';
+import * as firestore from '@angular/fire/firestore';
+import { forkJoin, Observable } from 'rxjs';
+import { first, map, mergeMap, concatAll } from 'rxjs/operators';
 
-export interface Emotion {
+export interface Emotion extends firestore.DocumentData {
   id?: string;
   name: string;
 }
-export interface Activity {
+export interface Activity extends firestore.DocumentData {
   id?: string;
   count: number;
 }
-export interface Entry {
+export interface Entry extends firestore.DocumentData {
   createdAt: Date;
   emotions: Record<string, number>;
   activities: string[];
 }
 
-export interface Stat {
+export interface Stat extends firestore.DocumentData {
   createdAt: Date;
   type: string;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any;
 }
 
@@ -34,26 +30,30 @@ export interface Stat {
   providedIn: 'root',
 })
 export class FirebaseService {
-  constructor(public db: AngularFirestore) {}
+  constructor(public db: firestore.AngularFirestore) {}
 
-  get emotions() {
+  get emotions(): Observable<firestore.DocumentChangeAction<Emotion>[]> {
     return this.db.collection('emotions').snapshotChanges() as Observable<
-      DocumentChangeAction<Emotion>[]
+      firestore.DocumentChangeAction<Emotion>[]
     >;
   }
 
-  get activities() {
+  get activities(): Observable<firestore.DocumentChangeAction<Activity>[]> {
     return this.db.collection('activities').snapshotChanges() as Observable<
-      DocumentChangeAction<Activity>[]
+      firestore.DocumentChangeAction<Activity>[]
     >;
   }
 
-  getFrequentActivities(limit = 20) {
+  getFrequentActivities(
+    limit = 20,
+  ): Observable<firestore.DocumentChangeAction<Activity>[]> {
     return this.db
       .collection('activities', (ref) =>
         ref.orderBy('count', 'desc').limit(limit),
       )
-      .snapshotChanges() as Observable<DocumentChangeAction<Activity>[]>;
+      .snapshotChanges() as Observable<
+      firestore.DocumentChangeAction<Activity>[]
+    >;
   }
 
   getRecentEntries(limit = 50): Observable<Entry[]> {
@@ -71,13 +71,16 @@ export class FirebaseService {
   getRecentEntriesWithStats(
     limit = 50,
     statsId: string = null,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Observable<{ entry: Entry; stats: any }> {
     const entrySnapshots = this.db
       .collection('entries', (ref) =>
         ref.orderBy('createdAt', 'desc').limit(limit),
       )
       .snapshotChanges()
-      .pipe(first(), concatAll()) as Observable<DocumentChangeAction<Entry>>;
+      .pipe(first(), concatAll()) as Observable<
+      firestore.DocumentChangeAction<Entry>
+    >;
 
     return entrySnapshots.pipe(
       mergeMap(
@@ -114,7 +117,7 @@ export class FirebaseService {
   /**
    * Retrieve an activity document, creating if necessary.
    */
-  async getActivity(name: string): Promise<AngularFirestoreDocument> {
+  async getActivity(name: string): Promise<firestore.AngularFirestoreDocument> {
     const doc = this.db.collection('activities').doc(name);
 
     const docSnapshot = await doc.get().toPromise();
@@ -126,14 +129,11 @@ export class FirebaseService {
     return doc;
   }
 
-  async addEntry(entry: any) {
-    entry.createdAt = new Date();
-    console.log(entry);
-
+  async addEntry(entry: Entry): Promise<void> {
     // TODO run this in a transaction?
     // Get documents for each activity
     entry.activities.forEach((activity: string) => {
-      const activityDoc: AngularFirestoreDocument<Activity> = this.db
+      const activityDoc: firestore.AngularFirestoreDocument<Activity> = this.db
         .collection('activities')
         .doc(activity);
       activityDoc.get().subscribe((doc) => {
@@ -150,7 +150,7 @@ export class FirebaseService {
    *
    * @param entryData Maps entry document IDs to arbitrary result blobs
    */
-  async addStat(stat: Stat, entryData?: Record<string, any>) {
+  async addStat(stat: Stat, entryData?: Record<string, any>): Promise<void> {
     const statRef = await this.db.collection('stats').add(stat);
 
     if (entryData) {

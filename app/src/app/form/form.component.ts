@@ -1,12 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import {
-  FormBuilder,
-  FormGroup,
-  FormControl,
-  Validators,
-  FormArray,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 
 import { SettingsModel } from '../tagify/angular-tagify.component';
 import { TagifyService } from '../tagify/angular-tagify.service';
@@ -31,7 +25,7 @@ export interface Activity {
 export class FormComponent implements OnInit {
   entryForm!: FormGroup;
   emotions: Emotion[] = [];
-  get emotionControls() {
+  get emotionControls(): FormGroup {
     return this.entryForm.get('emotions') as FormGroup;
   }
 
@@ -55,14 +49,14 @@ export class FormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const emotionGroup: { [key: string]: any } = {};
+    const emotionGroup: { [key: string]: FormControl } = {};
 
     // Generate a form group based on available emotions.
     this.firebase.emotions.subscribe((emotions) => {
       // Sort by name.
       emotions.sort((a, b) => (a.payload.doc.id > b.payload.doc.id ? 1 : -1));
 
-      emotions.forEach((e: any) => {
+      emotions.forEach((e) => {
         const doc = e.payload.doc;
 
         this.emotions.push(Object.assign({ id: doc.id }, doc.data()));
@@ -90,25 +84,30 @@ export class FormComponent implements OnInit {
     });
   }
 
-  onSubmit(value: { [key: string]: any }) {
-    value.activities = value.activities
+  onSubmit(value: { [key: string]: any }): void {
+    const activities = value.activities
       ? value.activities.map((el) => el.value)
       : [];
 
     // Remove emotions which were not set.
-    value.emotions = Object.entries(value.emotions)
+    const emotions = Object.entries(value.emotions)
       .filter((item) => item[1] != '')
       .reduce((obj, item) => {
         obj[item[0]] = item[1];
         return obj;
       }, {});
 
-    this.firebase.addEntry(value).then((res) => {
+    const entry = {
+      activities: activities,
+      emotions: emotions,
+      createdAt: new Date(),
+    };
+    this.firebase.addEntry(entry).then(() => {
       this.router.navigate(['/list']);
     });
   }
 
-  onPickActivity(event: MouseEvent, activity: string) {
+  onPickActivity(event: MouseEvent, activity: string): void {
     // Remove associated tag component
     let el = event.srcElement as HTMLElement;
     // find tagify root node for this tag

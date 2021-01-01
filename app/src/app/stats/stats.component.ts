@@ -9,6 +9,7 @@ import { PCAService } from '../services/stats/pca.service';
 export class StatsComponent implements OnInit {
   constructor(private pca: PCAService) {}
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   ngOnInit(): void {}
 
   runPCA(): void {

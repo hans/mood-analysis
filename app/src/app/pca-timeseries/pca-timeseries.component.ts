@@ -2,12 +2,12 @@ import { Component, OnInit, Input } from '@angular/core';
 
 import { Chart, ChartDataSets, ChartOptions, TimeUnit } from 'chart.js';
 import * as pluginZoom from 'chartjs-plugin-zoom';
-import { Color, Label } from 'ng2-charts';
+import { Color } from 'ng2-charts';
 
 import * as _ from 'lodash';
 import Matrix from 'ml-matrix';
 
-import { Entry, Stat } from '../services/firebase.service';
+import { Entry } from '../services/firebase.service';
 import { PCARecord } from '../services/stats/pca.service';
 
 @Component({

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { DocumentReference } from '@angular/fire/firestore';
+import * as firestore from '@angular/fire/firestore';
 import * as _ from 'lodash';
 
 import { Matrix } from 'ml-matrix';
@@ -11,7 +11,7 @@ import { Entry, FirebaseService } from '../firebase.service';
 export interface PCARecord {
   // Mapping from emotion index to emotion string
   emotions: string[];
-  involvedEntries: DocumentReference<Entry>[];
+  involvedEntries: firestore.DocumentReference<Entry>[];
 
   // Parameters
   // Eigenvectors as 1D array
@@ -33,13 +33,13 @@ export interface PCARecord {
 export class PCAService {
   constructor(private fb: FirebaseService) {}
 
-  async run() {
+  async run(): Promise<void> {
     // TODO find relevant emotion subset. For now we'll just use all the
     // emotions and drop entries missing emotions. Ignore Daylio "happiness" emotion.
     this.fb.db
       .collection('entries')
       .snapshotChanges()
-      .subscribe((entrySnapshots: any[]) => {
+      .subscribe((entrySnapshots: firestore.DocumentChangeAction<Entry>[]) => {
         const allEmotions = new Set(
           entrySnapshots.flatMap((e) =>
             Object.keys(e.payload.doc.data().emotions),
@@ -56,9 +56,6 @@ export class PCAService {
         );
 
         const emotions = [...allEmotions];
-        const emotionIdxs = Object.fromEntries(
-          emotions.map((e, idx) => [e, idx]),
-        );
 
         // Construct data matrix.
         // TODO normalize
@@ -71,7 +68,9 @@ export class PCAService {
         const pca = new PCA(data, { center: true }),
           record: PCARecord = {
             emotions: emotions,
-            involvedEntries: compatibleEntries.map((e) => e.payload.doc.ref),
+            involvedEntries: compatibleEntries.map(
+              (e) => e.payload.doc.ref as firestore.DocumentReference<Entry>,
+            ),
 
             eigenvectors: pca.getEigenvectors().to1DArray(),
             eigenvalues: pca.getEigenvalues(),
