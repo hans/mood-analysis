@@ -1,5 +1,113 @@
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([["main"],{
 
+/***/ "/MBm":
+/*!********************************************!*\
+  !*** ./src/app/export/export.component.ts ***!
+  \********************************************/
+/*! exports provided: ExportComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ExportComponent", function() { return ExportComponent; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var d3_dsv__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! d3-dsv */ "Ri0D");
+/* harmony import */ var jszip__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! jszip */ "xOOu");
+/* harmony import */ var jszip__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(jszip__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var file_saver__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! file-saver */ "Iab2");
+/* harmony import */ var file_saver__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(file_saver__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _services_firebase_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../services/firebase.service */ "Z2Br");
+
+
+
+
+
+
+
+class ExportComponent {
+    constructor(fb) {
+        this.fb = fb;
+    }
+    ngOnInit() { }
+    export() {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            this.fb.db
+                .collection('entries')
+                .valueChanges()
+                .subscribe((entries) => {
+                this._exportAndDownload(entries);
+            });
+        });
+    }
+    _exportAndDownload(entries) {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            const zip = new jszip__WEBPACK_IMPORTED_MODULE_3__();
+            zip.file('emotions.csv', this.generateEmotionCsv(entries));
+            zip.file('activities.csv', this.generateActivityCsv(entries));
+            zip.generateAsync({ type: 'blob' }).then((blob) => {
+                console.log(blob);
+                const now = new Date();
+                Object(file_saver__WEBPACK_IMPORTED_MODULE_4__["saveAs"])(blob, `mood-analysis_${now.getFullYear()}-${(now.getMonth() + 1)
+                    .toString()
+                    .padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}.zip`);
+            });
+        });
+    }
+    /**
+     * Generate long emotion dataframe in CSV format.
+     */
+    generateEmotionCsv(entries) {
+        const rows = entries.flatMap((en) => {
+            return Object.entries(en.emotions).map(([em, value]) => {
+                var _a;
+                return ({
+                    datetime: (_a = en.createdAt) === null || _a === void 0 ? void 0 : _a.toDate(),
+                    emotion: em,
+                    value: value,
+                });
+            });
+        });
+        return Object(d3_dsv__WEBPACK_IMPORTED_MODULE_2__["csvFormat"])(rows);
+    }
+    /**
+     * Generate long activity dataframe in CSV format.
+     */
+    generateActivityCsv(entries) {
+        const rows = entries.flatMap((en) => {
+            var _a;
+            return (((_a = en.activities) === null || _a === void 0 ? void 0 : _a.map((act) => {
+                var _a;
+                return act.length > 0
+                    ? {
+                        datetime: (_a = en.createdAt) === null || _a === void 0 ? void 0 : _a.toDate(),
+                        activity: act,
+                    }
+                    : null;
+            }).filter((x) => !!x)) || []);
+        });
+        return Object(d3_dsv__WEBPACK_IMPORTED_MODULE_2__["csvFormat"])(rows);
+    }
+}
+ExportComponent.ɵfac = function ExportComponent_Factory(t) { return new (t || ExportComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_services_firebase_service__WEBPACK_IMPORTED_MODULE_5__["FirebaseService"])); };
+ExportComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: ExportComponent, selectors: [["app-export"]], decls: 2, vars: 0, consts: [[3, "click"]], template: function ExportComponent_Template(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "button", 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function ExportComponent_Template_button_click_0_listener() { return ctx.export(); });
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](1, "Export");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+    } }, styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJleHBvcnQuY29tcG9uZW50LmNzcyJ9 */"] });
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](ExportComponent, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"],
+        args: [{
+                selector: 'app-export',
+                templateUrl: './export.component.html',
+                styleUrls: ['./export.component.css'],
+            }]
+    }], function () { return [{ type: _services_firebase_service__WEBPACK_IMPORTED_MODULE_5__["FirebaseService"] }]; }, null); })();
+
+
+/***/ }),
+
 /***/ 0:
 /*!***************************!*\
   !*** multi ./src/main.ts ***!
@@ -29,13 +137,13 @@ const environment = {
     production: false,
     // TODO don't store here ..
     firebase: {
-        "apiKey": "AIzaSyAW_6zYywvUy67RXZwGiMZ3R_jsSykygmc",
-        "authDomain": "mood-85e71.firebaseapp.com",
-        "projectId": "mood-85e71",
-        "storageBucket": "mood-85e71.appspot.com",
-        "messagingSenderId": "81154981835",
-        "appId": "1:81154981835:web:712f625042460cd47b004e"
-    }
+        apiKey: 'AIzaSyAW_6zYywvUy67RXZwGiMZ3R_jsSykygmc',
+        authDomain: 'mood-85e71.firebaseapp.com',
+        projectId: 'mood-85e71',
+        storageBucket: 'mood-85e71.appspot.com',
+        messagingSenderId: '81154981835',
+        appId: '1:81154981835:web:712f625042460cd47b004e',
+    },
 };
 /*
  * For easier debugging in development mode, you can import the following file
@@ -81,40 +189,51 @@ class PCAService {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             // TODO find relevant emotion subset. For now we'll just use all the
             // emotions and drop entries missing emotions. Ignore Daylio "happiness" emotion.
-            this.fb.db.collection("entries").snapshotChanges().subscribe((entrySnapshots) => {
-                let allEmotions = new Set(entrySnapshots.flatMap(e => Object.keys(e.payload.doc.data().emotions)));
-                // Delete Daylio emotions
-                allEmotions.delete("happiness");
-                let compatibleEntries = entrySnapshots.filter(e => lodash__WEBPACK_IMPORTED_MODULE_2__["isEqual"](new Set(Object.keys(e.payload.doc.data().emotions)), allEmotions));
-                let emotions = [...allEmotions];
-                let emotionIdxs = Object.fromEntries(emotions.map((e, idx) => [e, idx]));
-                // Construct data matrix.
-                // TODO normalize
-                let data = new ml_matrix__WEBPACK_IMPORTED_MODULE_3__["Matrix"](compatibleEntries.map(entry => emotions.map(em => entry.payload.doc.data().emotions[em])));
-                let pca = new ml_pca__WEBPACK_IMPORTED_MODULE_4__["PCA"](data, { center: true }), record = {
-                    emotions: emotions,
-                    involvedEntries: compatibleEntries.map(e => e.payload.doc.ref),
-                    eigenvectors: pca.getEigenvectors().to1DArray(),
-                    eigenvalues: pca.getEigenvalues(),
-                    loadings: pca.getLoadings().to1DArray(),
-                    explainedVariance: pca.getExplainedVariance(),
-                    projectedData: pca.predict(data).to1DArray()
-                };
-                // Compute per-entry stats (projected values)
-                // TODO configurable
-                let truncatedProjection = pca.predict(data).subMatrixColumn([0, 1]);
-                let entryStats = Object.fromEntries(lodash__WEBPACK_IMPORTED_MODULE_2__["zip"](compatibleEntries.map(e => e.payload.doc.id), truncatedProjection.to2DArray()));
-                this.fb.addStat({ type: "pca", createdAt: new Date(), data: record }, entryStats);
+            return new Promise((resolve, reject) => {
+                this.fb.db
+                    .collection('entries')
+                    .snapshotChanges()
+                    .subscribe((entrySnapshots) => {
+                    const allEmotions = new Set(entrySnapshots.flatMap((e) => Object.keys(e.payload.doc.data().emotions)));
+                    // Delete Daylio emotions
+                    allEmotions.delete('happiness');
+                    const compatibleEntries = entrySnapshots.filter((e) => lodash__WEBPACK_IMPORTED_MODULE_2__["isEqual"](new Set(Object.keys(e.payload.doc.data().emotions)), allEmotions));
+                    const emotions = [...allEmotions];
+                    // Construct data matrix.
+                    // TODO normalize
+                    const data = new ml_matrix__WEBPACK_IMPORTED_MODULE_3__["Matrix"](compatibleEntries.map((entry) => emotions.map((em) => entry.payload.doc.data().emotions[em])));
+                    const pca = new ml_pca__WEBPACK_IMPORTED_MODULE_4__["PCA"](data, { center: true }), record = {
+                        emotions: emotions,
+                        involvedEntries: compatibleEntries.map((e) => e.payload.doc.ref),
+                        eigenvectors: pca.getEigenvectors().to1DArray(),
+                        eigenvalues: pca.getEigenvalues(),
+                        loadings: pca.getLoadings().to1DArray(),
+                        explainedVariance: pca.getExplainedVariance(),
+                        projectedData: pca.predict(data).to1DArray(),
+                    };
+                    // Compute per-entry stats (projected values)
+                    // TODO configurable
+                    const truncatedProjection = pca
+                        .predict(data)
+                        .subMatrixColumn([0, 1]);
+                    const entryStats = Object.fromEntries(lodash__WEBPACK_IMPORTED_MODULE_2__["zip"](compatibleEntries.map((e) => e.payload.doc.id), truncatedProjection.to2DArray()));
+                    const stat = {
+                        type: 'pca',
+                        createdAt: this.fb.now(),
+                        data: record,
+                    };
+                    this.fb.addStat(stat, entryStats).then((stat) => resolve(stat));
+                });
             });
         });
     }
 }
 PCAService.ɵfac = function PCAService_Factory(t) { return new (t || PCAService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_firebase_service__WEBPACK_IMPORTED_MODULE_5__["FirebaseService"])); };
-PCAService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: PCAService, factory: PCAService.ɵfac, providedIn: "root" });
+PCAService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: PCAService, factory: PCAService.ɵfac, providedIn: 'root' });
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](PCAService, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"],
         args: [{
-                providedIn: "root"
+                providedIn: 'root',
             }]
     }], function () { return [{ type: _firebase_service__WEBPACK_IMPORTED_MODULE_5__["FirebaseService"] }]; }, null); })();
 
@@ -150,7 +269,7 @@ class PcaScatterComponent {
             responsive: true,
             tooltips: {
                 enabled: true,
-                intersect: false
+                intersect: false,
             },
             scales: {
             // xAxes: [
@@ -177,13 +296,13 @@ class PcaScatterComponent {
                 zoom: {
                     pan: {
                         enabled: true,
-                        mode: 'x'
+                        mode: 'x',
                     },
                     zoom: {
-                        enabled: true
-                    }
-                }
-            }
+                        enabled: true,
+                    },
+                },
+            },
         };
     }
     ngOnInit() {
@@ -210,7 +329,7 @@ PcaScatterComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefi
         args: [{
                 selector: 'app-pca-scatter',
                 templateUrl: './pca-scatter.component.html',
-                styleUrls: ['./pca-scatter.component.css']
+                styleUrls: ['./pca-scatter.component.css'],
             }]
     }], function () { return []; }, { record: [{
             type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"]
@@ -258,7 +377,7 @@ class TagifyComponent {
             add: () => {
                 this.add.emit({
                     tags: this.tagify.value,
-                    added: this.tagify.value[this.tagify.value.length - 1]
+                    added: this.tagify.value[this.tagify.value.length - 1],
                 });
                 if (this.onChange !== null)
                     this.onChange(this.tagify.value);
@@ -267,7 +386,7 @@ class TagifyComponent {
                 this.remove.emit(this.tagify.value);
                 if (this.onChange !== null)
                     this.onChange(this.tagify.value);
-            }
+            },
         };
         this.tagify = this.tagifyService.getTagifyRef(this.tagifyInputRef.nativeElement, this.settings);
         if (this.value) {
@@ -327,8 +446,8 @@ TagifyComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineCo
             {
                 provide: _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NG_VALUE_ACCESSOR"],
                 useExisting: Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["forwardRef"])(() => TagifyComponent),
-                multi: true
-            }
+                multi: true,
+            },
         ]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵNgOnChangesFeature"]], decls: 1, vars: 1, consts: [[4, "ngIf"], ["tagifyInputRef", ""]], template: function TagifyComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](0, TagifyComponent_input_0_Template, 2, 0, "input", 0);
     } if (rf & 2) {
@@ -338,14 +457,14 @@ TagifyComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineCo
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"],
         args: [{
                 selector: 'tagify',
-                template: `<input *ngIf="settings" #tagifyInputRef/>`,
+                template: `<input *ngIf="settings" #tagifyInputRef />`,
                 providers: [
                     {
                         provide: _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NG_VALUE_ACCESSOR"],
                         useExisting: Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["forwardRef"])(() => TagifyComponent),
-                        multi: true
-                    }
-                ]
+                        multi: true,
+                    },
+                ],
             }]
     }], function () { return [{ type: _angular_tagify_service__WEBPACK_IMPORTED_MODULE_2__["TagifyService"] }]; }, { add: [{
             type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Output"]
@@ -676,21 +795,34 @@ webpackContext.id = "RnhZ";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AppComponent", function() { return AppComponent; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "fXoL");
-/* harmony import */ var _angular_material_sidenav__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/material/sidenav */ "XhcP");
-/* harmony import */ var _angular_material_list__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/material/list */ "MutI");
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/router */ "tyNb");
+/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! firebase/app */ "Jgta");
+/* harmony import */ var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/fire/auth */ "UbJi");
+/* harmony import */ var _angular_material_sidenav__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/material/sidenav */ "XhcP");
+/* harmony import */ var _angular_material_list__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/material/list */ "MutI");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/router */ "tyNb");
+
+
 
 
 
 
 
 class AppComponent {
-    constructor() {
+    constructor(auth) {
+        this.auth = auth;
         this.title = 'app';
     }
+    login() {
+        this.auth
+            .signInWithPopup(new firebase_app__WEBPACK_IMPORTED_MODULE_1__["default"].auth.GoogleAuthProvider())
+            .then((c) => console.log(c));
+    }
+    logout() {
+        this.auth.signOut();
+    }
 }
-AppComponent.ɵfac = function AppComponent_Factory(t) { return new (t || AppComponent)(); };
-AppComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: AppComponent, selectors: [["app-root"]], decls: 11, vars: 0, consts: [[1, "example-container"], ["mode", "side", "opened", ""], ["routerLink", "/form", "routerLinkActive", "active-list-item"], ["routerLink", "/list", "routerLinkActive", "active-list-item"], ["routerLink", "/stats", "routerLinkActive", "active-list-item"]], template: function AppComponent_Template(rf, ctx) { if (rf & 1) {
+AppComponent.ɵfac = function AppComponent_Factory(t) { return new (t || AppComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_fire_auth__WEBPACK_IMPORTED_MODULE_2__["AngularFireAuth"])); };
+AppComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: AppComponent, selectors: [["app-root"]], decls: 17, vars: 0, consts: [[1, "example-container"], ["mode", "side", "opened", ""], ["routerLink", "/form", "routerLinkActive", "active-list-item"], ["routerLink", "/list", "routerLinkActive", "active-list-item"], ["routerLink", "/stats", "routerLinkActive", "active-list-item"], ["routerLink", "/export", "routerLinkActive", "active-list-item"], [3, "click"]], template: function AppComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "mat-sidenav-container", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "mat-sidenav", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](2, "mat-nav-list");
@@ -703,21 +835,32 @@ AppComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineCompo
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](7, "mat-list-item", 4);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](8, "Stats");
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](9, "mat-list-item", 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](10, "Export");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](11, "mat-list-item", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function AppComponent_Template_mat_list_item_click_11_listener() { return ctx.login(); });
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](12, "Log in");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](13, "mat-list-item", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function AppComponent_Template_mat_list_item_click_13_listener() { return ctx.logout(); });
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](14, "Log out");
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](9, "mat-sidenav-content");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](10, "router-outlet");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](15, "mat-sidenav-content");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](16, "router-outlet");
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-    } }, directives: [_angular_material_sidenav__WEBPACK_IMPORTED_MODULE_1__["MatSidenavContainer"], _angular_material_sidenav__WEBPACK_IMPORTED_MODULE_1__["MatSidenav"], _angular_material_list__WEBPACK_IMPORTED_MODULE_2__["MatNavList"], _angular_material_list__WEBPACK_IMPORTED_MODULE_2__["MatListItem"], _angular_router__WEBPACK_IMPORTED_MODULE_3__["RouterLink"], _angular_router__WEBPACK_IMPORTED_MODULE_3__["RouterLinkActive"], _angular_material_sidenav__WEBPACK_IMPORTED_MODULE_1__["MatSidenavContent"], _angular_router__WEBPACK_IMPORTED_MODULE_3__["RouterOutlet"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJhcHAuY29tcG9uZW50LmNzcyJ9 */"] });
+    } }, directives: [_angular_material_sidenav__WEBPACK_IMPORTED_MODULE_3__["MatSidenavContainer"], _angular_material_sidenav__WEBPACK_IMPORTED_MODULE_3__["MatSidenav"], _angular_material_list__WEBPACK_IMPORTED_MODULE_4__["MatNavList"], _angular_material_list__WEBPACK_IMPORTED_MODULE_4__["MatListItem"], _angular_router__WEBPACK_IMPORTED_MODULE_5__["RouterLink"], _angular_router__WEBPACK_IMPORTED_MODULE_5__["RouterLinkActive"], _angular_material_sidenav__WEBPACK_IMPORTED_MODULE_3__["MatSidenavContent"], _angular_router__WEBPACK_IMPORTED_MODULE_5__["RouterOutlet"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJhcHAuY29tcG9uZW50LmNzcyJ9 */"] });
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](AppComponent, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"],
         args: [{
                 selector: 'app-root',
                 templateUrl: './app.component.html',
-                styleUrls: ['./app.component.css']
+                styleUrls: ['./app.component.css'],
             }]
-    }], null, null); })();
+    }], function () { return [{ type: _angular_fire_auth__WEBPACK_IMPORTED_MODULE_2__["AngularFireAuth"] }]; }, null); })();
 
 
 /***/ }),
@@ -733,8 +876,9 @@ AppComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineCompo
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StatsComponent", function() { return StatsComponent; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "fXoL");
-/* harmony import */ var _services_stats_pca_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../services/stats/pca.service */ "BHhs");
-/* harmony import */ var _stats_details_stats_details_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../stats-details/stats-details.component */ "UrxW");
+/* harmony import */ var _stats_details_stats_details_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../stats-details/stats-details.component */ "UrxW");
+/* harmony import */ var _services_stats_pca_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../services/stats/pca.service */ "BHhs");
+
 
 
 
@@ -743,29 +887,40 @@ class StatsComponent {
     constructor(pca) {
         this.pca = pca;
     }
-    ngOnInit() {
-    }
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    ngOnInit() { }
     runPCA() {
-        console.log("here", this.pca);
-        this.pca.run();
+        this.pca.run().then((stat) => {
+            console.log('cb');
+            // Reload details component.
+            this.details.id = stat.id;
+        });
     }
 }
-StatsComponent.ɵfac = function StatsComponent_Factory(t) { return new (t || StatsComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_services_stats_pca_service__WEBPACK_IMPORTED_MODULE_1__["PCAService"])); };
-StatsComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: StatsComponent, selectors: [["app-stats"]], decls: 3, vars: 0, consts: [[3, "click"]], template: function StatsComponent_Template(rf, ctx) { if (rf & 1) {
+StatsComponent.ɵfac = function StatsComponent_Factory(t) { return new (t || StatsComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_services_stats_pca_service__WEBPACK_IMPORTED_MODULE_2__["PCAService"])); };
+StatsComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: StatsComponent, selectors: [["app-stats"]], viewQuery: function StatsComponent_Query(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵviewQuery"](_stats_details_stats_details_component__WEBPACK_IMPORTED_MODULE_1__["StatsDetailsComponent"], true);
+    } if (rf & 2) {
+        let _t;
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵloadQuery"]()) && (ctx.details = _t.first);
+    } }, decls: 3, vars: 0, consts: [[3, "click"]], template: function StatsComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "button", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function StatsComponent_Template_button_click_0_listener() { return ctx.runPCA(); });
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1, "Run");
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](2, "app-stats-details");
-    } }, directives: [_stats_details_stats_details_component__WEBPACK_IMPORTED_MODULE_2__["StatsDetailsComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzdGF0cy5jb21wb25lbnQuY3NzIn0= */"] });
+    } }, directives: [_stats_details_stats_details_component__WEBPACK_IMPORTED_MODULE_1__["StatsDetailsComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzdGF0cy5jb21wb25lbnQuY3NzIn0= */"] });
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](StatsComponent, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"],
         args: [{
                 selector: 'app-stats',
                 templateUrl: './stats.component.html',
-                styleUrls: ['./stats.component.css']
+                styleUrls: ['./stats.component.css'],
             }]
-    }], function () { return [{ type: _services_stats_pca_service__WEBPACK_IMPORTED_MODULE_1__["PCAService"] }]; }, null); })();
+    }], function () { return [{ type: _services_stats_pca_service__WEBPACK_IMPORTED_MODULE_2__["PCAService"] }]; }, { details: [{
+            type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["ViewChild"],
+            args: [_stats_details_stats_details_component__WEBPACK_IMPORTED_MODULE_1__["StatsDetailsComponent"]]
+        }] }); })();
 
 
 /***/ }),
@@ -823,7 +978,7 @@ TagifyService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInj
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](TagifyService, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"],
         args: [{
-                providedIn: 'root'
+                providedIn: 'root',
             }]
     }], function () { return []; }, null); })();
 
@@ -842,12 +997,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StatsDetailsComponent", function() { return StatsDetailsComponent; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
-/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs/operators */ "kU1M");
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/router */ "tyNb");
-/* harmony import */ var _services_firebase_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../services/firebase.service */ "Z2Br");
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/common */ "ofXK");
-/* harmony import */ var _pca_timeseries_pca_timeseries_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../pca-timeseries/pca-timeseries.component */ "ti84");
-/* harmony import */ var _pca_scatter_pca_scatter_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../pca-scatter/pca-scatter.component */ "CccS");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! lodash */ "LvDl");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs/operators */ "kU1M");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/router */ "tyNb");
+/* harmony import */ var _services_firebase_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../services/firebase.service */ "Z2Br");
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/common */ "ofXK");
+/* harmony import */ var _pca_timeseries_pca_timeseries_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../pca-timeseries/pca-timeseries.component */ "ti84");
+/* harmony import */ var _pca_scatter_pca_scatter_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../pca-scatter/pca-scatter.component */ "CccS");
+
 
 
 
@@ -859,13 +1017,42 @@ __webpack_require__.r(__webpack_exports__);
 
 function StatsDetailsComponent_div_0_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div");
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](1, "app-pca-timeseries", 1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](2, "app-pca-scatter", 2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](1, "ul", 1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](2, "li");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](3, "strong");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](4, "Created at:");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵpipe"](6, "date");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](7, "li");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](8, "strong");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](9, "Involved entries:");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](10);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵpipe"](11, "date");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵpipe"](12, "date");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](13, "li");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](14, "strong");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](15, "Explained variance:");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](16);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](17, "app-pca-timeseries", 2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](18, "app-pca-scatter", 3);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const ctx_r0 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate1"](" ", _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵpipeBind2"](6, 9, ctx_r0.stat.createdAt.toDate(), "yyyy-MM-dd HH:mm"), "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate2"](" ", _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵpipeBind2"](11, 12, ctx_r0.firstEntryDate, "yyyy-MM-dd HH:mm"), " \u2014 ", _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵpipeBind2"](12, 15, ctx_r0.lastEntryDate, "yyyy-MM-dd HH:mm"), "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate2"](" ", ctx_r0.explainedVariance.join(", "), " (total ", ctx_r0.totalExplainedVariance, "%)");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("record", ctx_r0.pcaRecord)("entries", ctx_r0.entries);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("record", ctx_r0.pcaRecord)("entries", ctx_r0.entries)("numComponents", ctx_r0.numComponents);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("record", ctx_r0.pcaRecord);
 } }
@@ -873,6 +1060,7 @@ class StatsDetailsComponent {
     constructor(route, fb) {
         this.route = route;
         this.fb = fb;
+        this.numComponents = 2;
         this.chartReady = false;
     }
     ngOnInit() {
@@ -883,8 +1071,11 @@ class StatsDetailsComponent {
                 }
                 else {
                     // Get most recent analysis.
-                    const query = this.fb.db.collection("stats", ref => ref.orderBy("createdAt", "desc").limit(1));
-                    const statSnapshot = yield query.snapshotChanges().pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["first"])()).toPromise();
+                    const query = this.fb.db.collection('stats', (ref) => ref.orderBy('createdAt', 'desc').limit(1));
+                    const statSnapshot = yield query
+                        .snapshotChanges()
+                        .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["first"])())
+                        .toPromise();
                     if (!statSnapshot) {
                         // TODO handle no stats
                     }
@@ -893,30 +1084,45 @@ class StatsDetailsComponent {
                 }
             }
             if (!this.stat) {
-                this.stat = (yield this.fb.db.collection("stats").doc(this.id).valueChanges().pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["first"])()).toPromise());
+                this.stat = (yield this.fb.db
+                    .collection('stats')
+                    .doc(this.id)
+                    .valueChanges()
+                    .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["first"])())
+                    .toPromise());
             }
+            this.reload();
+        });
+    }
+    reload() {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             // TODO assumes PCA stats
             this.pcaRecord = this.stat.data;
             // Load associated entries.
-            this.entries = yield Promise.all(this.pcaRecord.involvedEntries.map(ref => ref.get().then(r => r.data())));
+            this.entries = yield Promise.all(this.pcaRecord.involvedEntries.map((ref) => ref.get().then((r) => r.data())));
+            console.log(this.stat.createdAt);
+            this.firstEntryDate = lodash__WEBPACK_IMPORTED_MODULE_2__["min"](this.entries.map((e) => e.createdAt.toDate()));
+            this.lastEntryDate = lodash__WEBPACK_IMPORTED_MODULE_2__["max"](this.entries.map((e) => e.createdAt.toDate()));
+            this.explainedVariance = lodash__WEBPACK_IMPORTED_MODULE_2__["take"](this.pcaRecord.explainedVariance, this.numComponents).map((v) => v * 100);
+            this.totalExplainedVariance = lodash__WEBPACK_IMPORTED_MODULE_2__["sum"](this.explainedVariance);
             this.chartReady = true;
         });
     }
 }
-StatsDetailsComponent.ɵfac = function StatsDetailsComponent_Factory(t) { return new (t || StatsDetailsComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_3__["ActivatedRoute"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_services_firebase_service__WEBPACK_IMPORTED_MODULE_4__["FirebaseService"])); };
-StatsDetailsComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: StatsDetailsComponent, selectors: [["app-stats-details"]], inputs: { id: "id" }, decls: 1, vars: 1, consts: [[4, "ngIf"], [3, "record", "entries"], [3, "record"]], template: function StatsDetailsComponent_Template(rf, ctx) { if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](0, StatsDetailsComponent_div_0_Template, 3, 3, "div", 0);
+StatsDetailsComponent.ɵfac = function StatsDetailsComponent_Factory(t) { return new (t || StatsDetailsComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_4__["ActivatedRoute"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_services_firebase_service__WEBPACK_IMPORTED_MODULE_5__["FirebaseService"])); };
+StatsDetailsComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: StatsDetailsComponent, selectors: [["app-stats-details"]], inputs: { id: "id" }, decls: 1, vars: 1, consts: [[4, "ngIf"], [1, "stats-details"], [3, "record", "entries", "numComponents"], [3, "record"]], template: function StatsDetailsComponent_Template(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](0, StatsDetailsComponent_div_0_Template, 19, 18, "div", 0);
     } if (rf & 2) {
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", ctx.chartReady);
-    } }, directives: [_angular_common__WEBPACK_IMPORTED_MODULE_5__["NgIf"], _pca_timeseries_pca_timeseries_component__WEBPACK_IMPORTED_MODULE_6__["PcaTimeseriesComponent"], _pca_scatter_pca_scatter_component__WEBPACK_IMPORTED_MODULE_7__["PcaScatterComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzdGF0cy1kZXRhaWxzLmNvbXBvbmVudC5jc3MifQ== */"] });
+    } }, directives: [_angular_common__WEBPACK_IMPORTED_MODULE_6__["NgIf"], _pca_timeseries_pca_timeseries_component__WEBPACK_IMPORTED_MODULE_7__["PcaTimeseriesComponent"], _pca_scatter_pca_scatter_component__WEBPACK_IMPORTED_MODULE_8__["PcaScatterComponent"]], pipes: [_angular_common__WEBPACK_IMPORTED_MODULE_6__["DatePipe"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzdGF0cy1kZXRhaWxzLmNvbXBvbmVudC5jc3MifQ== */"] });
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](StatsDetailsComponent, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"],
         args: [{
                 selector: 'app-stats-details',
                 templateUrl: './stats-details.component.html',
-                styleUrls: ['./stats-details.component.css']
+                styleUrls: ['./stats-details.component.css'],
             }]
-    }], function () { return [{ type: _angular_router__WEBPACK_IMPORTED_MODULE_3__["ActivatedRoute"] }, { type: _services_firebase_service__WEBPACK_IMPORTED_MODULE_4__["FirebaseService"] }]; }, { id: [{
+    }], function () { return [{ type: _angular_router__WEBPACK_IMPORTED_MODULE_4__["ActivatedRoute"] }, { type: _services_firebase_service__WEBPACK_IMPORTED_MODULE_5__["FirebaseService"] }]; }, { id: [{
             type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Input"]
         }] }); })();
 
@@ -935,35 +1141,38 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FirebaseService", function() { return FirebaseService; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs */ "qCKp");
-/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs/operators */ "kU1M");
-/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/fire/firestore */ "I/3d");
+/* harmony import */ var firebase__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! firebase */ "JZFu");
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs */ "qCKp");
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs/operators */ "kU1M");
+/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/fire/firestore */ "I/3d");
 
 
 
 
 
 
-;
-;
+
 class FirebaseService {
     constructor(db) {
         this.db = db;
     }
+    now() {
+        return firebase__WEBPACK_IMPORTED_MODULE_2__["default"].firestore.FieldValue.serverTimestamp();
+    }
     get emotions() {
-        return this.db.collection("emotions")
-            .snapshotChanges();
+        return this.db.collection('emotions').snapshotChanges();
     }
     get activities() {
-        return this.db.collection("activities")
-            .snapshotChanges();
+        return this.db.collection('activities').snapshotChanges();
     }
     getFrequentActivities(limit = 20) {
-        return this.db.collection("activities", ref => ref.orderBy("count", "desc").limit(limit))
+        return this.db
+            .collection('activities', (ref) => ref.orderBy('count', 'desc').limit(limit))
             .snapshotChanges();
     }
     getRecentEntries(limit = 50) {
-        return this.db.collection("entries", ref => ref.orderBy("createdAt", "desc").limit(limit))
+        return this.db
+            .collection('entries', (ref) => ref.orderBy('createdAt', 'desc').limit(limit))
             .valueChanges();
     }
     /**
@@ -971,24 +1180,37 @@ class FirebaseService {
      * information for an analysis with the ID `statsId`.
      */
     getRecentEntriesWithStats(limit = 50, statsId = null) {
-        const entrySnapshots = this.db.collection("entries", ref => ref.orderBy("createdAt", "desc").limit(limit))
-            .snapshotChanges().pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["first"])(), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["concatAll"])());
-        return entrySnapshots.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["mergeMap"])(entrySnapshot => {
+        const entrySnapshots = this.db
+            .collection('entries', (ref) => ref.orderBy('createdAt', 'desc').limit(limit))
+            .snapshotChanges()
+            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["first"])(), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["concatAll"])());
+        return entrySnapshots.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["mergeMap"])((entrySnapshot) => {
             // Get associated stat.
-            return this.db.collection("entries").doc(entrySnapshot.payload.doc.id)
-                .collection("stats").doc(statsId).get().pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["map"])(x => x.data()));
-        }, (entrySnapshot, statDoc) => ({ entry: entrySnapshot.payload.doc.data(), stats: statDoc })));
+            return this.db
+                .collection('entries')
+                .doc(entrySnapshot.payload.doc.id)
+                .collection('stats')
+                .doc(statsId)
+                .get()
+                .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["map"])((x) => x.data()));
+        }, (entrySnapshot, statDoc) => ({
+            entry: entrySnapshot.payload.doc.data(),
+            stats: statDoc,
+        })));
     }
     getEntriesById(...ids) {
-        return Object(rxjs__WEBPACK_IMPORTED_MODULE_2__["forkJoin"])(ids.map(id => this.db.collection("entries").doc(id).valueChanges()));
+        return Object(rxjs__WEBPACK_IMPORTED_MODULE_3__["forkJoin"])(ids.map((id) => this.db
+            .collection('entries')
+            .doc(id)
+            .valueChanges()));
     }
     /**
      * Retrieve an activity document, creating if necessary.
      */
     getActivity(name) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-            let doc = this.db.collection("activities").doc(name);
-            let docSnapshot = yield doc.get().toPromise();
+            const doc = this.db.collection('activities').doc(name);
+            const docSnapshot = yield doc.get().toPromise();
             if (!(docSnapshot && docSnapshot.exists)) {
                 // Create the document
                 doc.set({ createdAt: new Date() });
@@ -998,18 +1220,18 @@ class FirebaseService {
     }
     addEntry(entry) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-            entry.createdAt = new Date();
-            console.log(entry);
             // TODO run this in a transaction?
             // Get documents for each activity
             entry.activities.forEach((activity) => {
-                var activityDoc = this.db.collection("activities").doc(activity);
-                activityDoc.get().subscribe(doc => {
-                    var count = doc.exists ? doc.data().count || 0 : 0;
+                const activityDoc = this.db
+                    .collection('activities')
+                    .doc(activity);
+                activityDoc.get().subscribe((doc) => {
+                    const count = doc.exists ? doc.data().count || 0 : 0;
                     activityDoc.set({ count: count + 1 }, { merge: true });
                 });
             });
-            this.db.collection("entries").add(entry);
+            this.db.collection('entries').add(entry);
         });
     }
     /**
@@ -1019,27 +1241,35 @@ class FirebaseService {
      */
     addStat(stat, entryData) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-            const statRef = yield this.db.collection("stats").add(stat);
+            const statRef = yield this.db.collection('stats').add(stat);
+            const ret = Object.assign(Object.assign({}, stat), { id: statRef.id });
             if (entryData) {
-                Object.entries(entryData).forEach(el => {
-                    let [id, docStats] = el;
-                    let docUpdate = {};
+                const entryStatOps = Object.entries(entryData).map((el) => {
+                    const [id, docStats] = el;
+                    const docUpdate = {};
                     docUpdate[stat.type] = docStats;
-                    console.log("docStats", docStats);
-                    this.db.collection("entries").doc(id).collection("stats").doc(statRef.id).set(docUpdate);
+                    console.log('docStats', docStats);
+                    return this.db
+                        .collection('entries')
+                        .doc(id)
+                        .collection('stats')
+                        .doc(statRef.id)
+                        .set(docUpdate);
                 });
+                yield Object(rxjs__WEBPACK_IMPORTED_MODULE_3__["forkJoin"])(entryStatOps).toPromise();
             }
+            return ret;
         });
     }
 }
-FirebaseService.ɵfac = function FirebaseService_Factory(t) { return new (t || FirebaseService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_fire_firestore__WEBPACK_IMPORTED_MODULE_4__["AngularFirestore"])); };
-FirebaseService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: FirebaseService, factory: FirebaseService.ɵfac, providedIn: "root" });
+FirebaseService.ɵfac = function FirebaseService_Factory(t) { return new (t || FirebaseService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_fire_firestore__WEBPACK_IMPORTED_MODULE_5__["AngularFirestore"])); };
+FirebaseService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: FirebaseService, factory: FirebaseService.ɵfac, providedIn: 'root' });
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](FirebaseService, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"],
         args: [{
-                providedIn: "root"
+                providedIn: 'root',
             }]
-    }], function () { return [{ type: _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_4__["AngularFirestore"] }]; }, null); })();
+    }], function () { return [{ type: _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_5__["AngularFirestore"] }]; }, null); })();
 
 
 /***/ }),
@@ -1070,15 +1300,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var ng2_charts__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ng2-charts */ "LPYB");
 /* harmony import */ var _tagify_angular_tagify_component__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./tagify/angular-tagify.component */ "JeHc");
 /* harmony import */ var _angular_fire__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @angular/fire */ "spgP");
-/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! @angular/fire/firestore */ "I/3d");
-/* harmony import */ var _app_routing_module__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./app-routing.module */ "vY5A");
-/* harmony import */ var _app_component__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./app.component */ "Sy1n");
-/* harmony import */ var _form_form_component__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./form/form.component */ "urH6");
-/* harmony import */ var _list_list_component__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./list/list.component */ "uMRu");
-/* harmony import */ var _stats_stats_component__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./stats/stats.component */ "TtVv");
-/* harmony import */ var _stats_details_stats_details_component__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./stats-details/stats-details.component */ "UrxW");
-/* harmony import */ var _pca_timeseries_pca_timeseries_component__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./pca-timeseries/pca-timeseries.component */ "ti84");
-/* harmony import */ var _pca_scatter_pca_scatter_component__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./pca-scatter/pca-scatter.component */ "CccS");
+/* harmony import */ var _angular_fire_auth__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! @angular/fire/auth */ "UbJi");
+/* harmony import */ var _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! @angular/fire/firestore */ "I/3d");
+/* harmony import */ var _app_routing_module__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./app-routing.module */ "vY5A");
+/* harmony import */ var _app_component__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./app.component */ "Sy1n");
+/* harmony import */ var _form_form_component__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./form/form.component */ "urH6");
+/* harmony import */ var _list_list_component__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./list/list.component */ "uMRu");
+/* harmony import */ var _stats_stats_component__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./stats/stats.component */ "TtVv");
+/* harmony import */ var _stats_details_stats_details_component__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./stats-details/stats-details.component */ "UrxW");
+/* harmony import */ var _pca_timeseries_pca_timeseries_component__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./pca-timeseries/pca-timeseries.component */ "ti84");
+/* harmony import */ var _pca_scatter_pca_scatter_component__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./pca-scatter/pca-scatter.component */ "CccS");
+/* harmony import */ var _export_export_component__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./export/export.component */ "/MBm");
+
+
 
 
 
@@ -1108,10 +1342,11 @@ __webpack_require__.r(__webpack_exports__);
 
 class AppModule {
 }
-AppModule.ɵmod = _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineNgModule"]({ type: AppModule, bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_18__["AppComponent"]] });
+AppModule.ɵmod = _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineNgModule"]({ type: AppModule, bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_19__["AppComponent"]] });
 AppModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineInjector"]({ factory: function AppModule_Factory(t) { return new (t || AppModule)(); }, providers: [], imports: [[
             _angular_fire__WEBPACK_IMPORTED_MODULE_15__["AngularFireModule"].initializeApp(_environments_environment__WEBPACK_IMPORTED_MODULE_0__["environment"].firebase),
-            _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_16__["AngularFirestoreModule"],
+            _angular_fire_auth__WEBPACK_IMPORTED_MODULE_16__["AngularFireAuthModule"],
+            _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_17__["AngularFirestoreModule"],
             _angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__["BrowserModule"],
             _angular_forms__WEBPACK_IMPORTED_MODULE_3__["FormsModule"],
             _angular_forms__WEBPACK_IMPORTED_MODULE_3__["ReactiveFormsModule"],
@@ -1125,16 +1360,18 @@ AppModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineInjector
             _angular_material_list__WEBPACK_IMPORTED_MODULE_11__["MatListModule"],
             _angular_material_table__WEBPACK_IMPORTED_MODULE_12__["MatTableModule"],
             ng2_charts__WEBPACK_IMPORTED_MODULE_13__["ChartsModule"],
-            _app_routing_module__WEBPACK_IMPORTED_MODULE_17__["AppRoutingModule"],
+            _app_routing_module__WEBPACK_IMPORTED_MODULE_18__["AppRoutingModule"],
         ]] });
-(function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵsetNgModuleScope"](AppModule, { declarations: [_app_component__WEBPACK_IMPORTED_MODULE_18__["AppComponent"],
-        _form_form_component__WEBPACK_IMPORTED_MODULE_19__["FormComponent"],
+(function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵsetNgModuleScope"](AppModule, { declarations: [_app_component__WEBPACK_IMPORTED_MODULE_19__["AppComponent"],
+        _form_form_component__WEBPACK_IMPORTED_MODULE_20__["FormComponent"],
         _tagify_angular_tagify_component__WEBPACK_IMPORTED_MODULE_14__["TagifyComponent"],
-        _list_list_component__WEBPACK_IMPORTED_MODULE_20__["ListComponent"],
-        _stats_stats_component__WEBPACK_IMPORTED_MODULE_21__["StatsComponent"],
-        _stats_details_stats_details_component__WEBPACK_IMPORTED_MODULE_22__["StatsDetailsComponent"],
-        _pca_timeseries_pca_timeseries_component__WEBPACK_IMPORTED_MODULE_23__["PcaTimeseriesComponent"],
-        _pca_scatter_pca_scatter_component__WEBPACK_IMPORTED_MODULE_24__["PcaScatterComponent"]], imports: [_angular_fire__WEBPACK_IMPORTED_MODULE_15__["AngularFireModule"], _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_16__["AngularFirestoreModule"],
+        _list_list_component__WEBPACK_IMPORTED_MODULE_21__["ListComponent"],
+        _stats_stats_component__WEBPACK_IMPORTED_MODULE_22__["StatsComponent"],
+        _stats_details_stats_details_component__WEBPACK_IMPORTED_MODULE_23__["StatsDetailsComponent"],
+        _pca_timeseries_pca_timeseries_component__WEBPACK_IMPORTED_MODULE_24__["PcaTimeseriesComponent"],
+        _pca_scatter_pca_scatter_component__WEBPACK_IMPORTED_MODULE_25__["PcaScatterComponent"],
+        _export_export_component__WEBPACK_IMPORTED_MODULE_26__["ExportComponent"]], imports: [_angular_fire__WEBPACK_IMPORTED_MODULE_15__["AngularFireModule"], _angular_fire_auth__WEBPACK_IMPORTED_MODULE_16__["AngularFireAuthModule"],
+        _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_17__["AngularFirestoreModule"],
         _angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__["BrowserModule"],
         _angular_forms__WEBPACK_IMPORTED_MODULE_3__["FormsModule"],
         _angular_forms__WEBPACK_IMPORTED_MODULE_3__["ReactiveFormsModule"],
@@ -1148,23 +1385,25 @@ AppModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineInjector
         _angular_material_list__WEBPACK_IMPORTED_MODULE_11__["MatListModule"],
         _angular_material_table__WEBPACK_IMPORTED_MODULE_12__["MatTableModule"],
         ng2_charts__WEBPACK_IMPORTED_MODULE_13__["ChartsModule"],
-        _app_routing_module__WEBPACK_IMPORTED_MODULE_17__["AppRoutingModule"]] }); })();
+        _app_routing_module__WEBPACK_IMPORTED_MODULE_18__["AppRoutingModule"]] }); })();
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵsetClassMetadata"](AppModule, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_2__["NgModule"],
         args: [{
                 declarations: [
-                    _app_component__WEBPACK_IMPORTED_MODULE_18__["AppComponent"],
-                    _form_form_component__WEBPACK_IMPORTED_MODULE_19__["FormComponent"],
+                    _app_component__WEBPACK_IMPORTED_MODULE_19__["AppComponent"],
+                    _form_form_component__WEBPACK_IMPORTED_MODULE_20__["FormComponent"],
                     _tagify_angular_tagify_component__WEBPACK_IMPORTED_MODULE_14__["TagifyComponent"],
-                    _list_list_component__WEBPACK_IMPORTED_MODULE_20__["ListComponent"],
-                    _stats_stats_component__WEBPACK_IMPORTED_MODULE_21__["StatsComponent"],
-                    _stats_details_stats_details_component__WEBPACK_IMPORTED_MODULE_22__["StatsDetailsComponent"],
-                    _pca_timeseries_pca_timeseries_component__WEBPACK_IMPORTED_MODULE_23__["PcaTimeseriesComponent"],
-                    _pca_scatter_pca_scatter_component__WEBPACK_IMPORTED_MODULE_24__["PcaScatterComponent"],
+                    _list_list_component__WEBPACK_IMPORTED_MODULE_21__["ListComponent"],
+                    _stats_stats_component__WEBPACK_IMPORTED_MODULE_22__["StatsComponent"],
+                    _stats_details_stats_details_component__WEBPACK_IMPORTED_MODULE_23__["StatsDetailsComponent"],
+                    _pca_timeseries_pca_timeseries_component__WEBPACK_IMPORTED_MODULE_24__["PcaTimeseriesComponent"],
+                    _pca_scatter_pca_scatter_component__WEBPACK_IMPORTED_MODULE_25__["PcaScatterComponent"],
+                    _export_export_component__WEBPACK_IMPORTED_MODULE_26__["ExportComponent"],
                 ],
                 imports: [
                     _angular_fire__WEBPACK_IMPORTED_MODULE_15__["AngularFireModule"].initializeApp(_environments_environment__WEBPACK_IMPORTED_MODULE_0__["environment"].firebase),
-                    _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_16__["AngularFirestoreModule"],
+                    _angular_fire_auth__WEBPACK_IMPORTED_MODULE_16__["AngularFireAuthModule"],
+                    _angular_fire_firestore__WEBPACK_IMPORTED_MODULE_17__["AngularFirestoreModule"],
                     _angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__["BrowserModule"],
                     _angular_forms__WEBPACK_IMPORTED_MODULE_3__["FormsModule"],
                     _angular_forms__WEBPACK_IMPORTED_MODULE_3__["ReactiveFormsModule"],
@@ -1178,10 +1417,10 @@ AppModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineInjector
                     _angular_material_list__WEBPACK_IMPORTED_MODULE_11__["MatListModule"],
                     _angular_material_table__WEBPACK_IMPORTED_MODULE_12__["MatTableModule"],
                     ng2_charts__WEBPACK_IMPORTED_MODULE_13__["ChartsModule"],
-                    _app_routing_module__WEBPACK_IMPORTED_MODULE_17__["AppRoutingModule"],
+                    _app_routing_module__WEBPACK_IMPORTED_MODULE_18__["AppRoutingModule"],
                 ],
                 providers: [],
-                bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_18__["AppComponent"]]
+                bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_19__["AppComponent"]],
             }]
     }], null, null); })();
 
@@ -1216,11 +1455,12 @@ __webpack_require__.r(__webpack_exports__);
 
 class PcaTimeseriesComponent {
     constructor() {
+        this.numComponents = 1;
         this.chartOptions = {
             responsive: true,
             tooltips: {
                 enabled: true,
-                intersect: false
+                intersect: false,
             },
             scales: {
                 xAxes: [
@@ -1230,33 +1470,33 @@ class PcaTimeseriesComponent {
                             unit: 'day',
                             displayFormats: {
                                 day: 'MMM D',
-                            }
-                        }
-                    }
+                            },
+                        },
+                    },
                 ],
                 yAxes: [
                     {
                         ticks: {
                             suggestedMin: -2,
-                            suggestedMax: 2
-                        }
-                    }
-                ]
+                            suggestedMax: 2,
+                        },
+                    },
+                ],
             },
             plugins: {
                 zoom: {
                     pan: {
                         enabled: true,
-                        mode: 'x'
+                        mode: 'x',
                     },
                     zoom: {
-                        enabled: true
-                    }
-                }
-            }
+                        enabled: true,
+                    },
+                },
+            },
         };
         this.chartColors = [
-            { borderColor: 'black', backgroundColor: 'rgba(255, 0, 0, 0.3)' }
+            { borderColor: 'black', backgroundColor: 'rgba(255, 0, 0, 0.3)' },
         ];
     }
     ngOnInit() {
@@ -1264,19 +1504,52 @@ class PcaTimeseriesComponent {
         this.chartData = this._chartData();
     }
     _chartData() {
-        let pcaData = ml_matrix__WEBPACK_IMPORTED_MODULE_4__["default"].from1DArray(this.record.involvedEntries.length, this.record.emotions.length, this.record.projectedData);
-        const dataset = lodash__WEBPACK_IMPORTED_MODULE_3__["zip"](this.entries, pcaData.to2DArray()).map(el => {
-            const [entry, vector] = el;
-            return { x: entry.createdAt.toDate(), y: vector[0] };
+        const pcaData = ml_matrix__WEBPACK_IMPORTED_MODULE_4__["default"].from1DArray(this.record.involvedEntries.length, this.record.emotions.length, this.record.projectedData).to2DArray();
+        const datasets = lodash__WEBPACK_IMPORTED_MODULE_3__["range"](this.numComponents).map((idx) => {
+            const componentData = lodash__WEBPACK_IMPORTED_MODULE_3__["zip"](this.entries, pcaData).map((el) => {
+                const [entry, vector] = el;
+                return { x: entry.createdAt.toDate(), y: vector[idx] };
+            });
+            const dataset = {
+                data: lodash__WEBPACK_IMPORTED_MODULE_3__["orderBy"](componentData, (el) => el.x),
+                label: `PCA ${idx + 1}`,
+            };
+            return dataset;
         });
-        const sortedData = lodash__WEBPACK_IMPORTED_MODULE_3__["orderBy"](dataset, el => el.x);
-        return [
-            { data: sortedData, label: 'PCA 1' }
-        ];
+        // Add moving average datasets.
+        // TODO extract magic number
+        const movingAverageDatasets = datasets.map((dataset) => this.computeMovingAverage(dataset, 1000 * 60 * 60 * 12));
+        return datasets.concat(movingAverageDatasets);
+    }
+    /**
+     * Compute a moving average of the given dataset over the given time window.
+     * Data points are resampled at the time window / frequency specified by
+     * `window` in millisecond units.
+     */
+    computeMovingAverage(dataset, stepSize) {
+        const data = lodash__WEBPACK_IMPORTED_MODULE_3__["orderBy"](dataset.data, (d) => d.x), dates = data.map((d) => d.x), minDate = dates[0], maxDate = dates[dates.length - 1], minTime = minDate.getTime();
+        const steps = lodash__WEBPACK_IMPORTED_MODULE_3__["range"](minDate.getTime(), maxDate.getTime(), stepSize), buckets = lodash__WEBPACK_IMPORTED_MODULE_3__["fromPairs"](steps.map((s) => [s, []]));
+        data.forEach((d) => {
+            const bucket = Math.floor((d.x.getTime() - minTime) / stepSize) * stepSize +
+                minTime;
+            buckets[bucket].push(d.y);
+        });
+        const avgData = Object.entries(buckets).map((el) => {
+            const [bucket, values] = el;
+            return {
+                x: new Date(Number(bucket)),
+                y: lodash__WEBPACK_IMPORTED_MODULE_3__["mean"](values),
+            };
+        });
+        const avgDataset = {
+            label: `${dataset.label} moving average`,
+            data: avgData,
+        };
+        return avgDataset;
     }
 }
 PcaTimeseriesComponent.ɵfac = function PcaTimeseriesComponent_Factory(t) { return new (t || PcaTimeseriesComponent)(); };
-PcaTimeseriesComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: PcaTimeseriesComponent, selectors: [["app-pca-timeseries"]], inputs: { entries: "entries", record: "record" }, decls: 2, vars: 2, consts: [["id", "chart-pca"], ["baseChart", "", "chartType", "line", 3, "datasets", "options"]], template: function PcaTimeseriesComponent_Template(rf, ctx) { if (rf & 1) {
+PcaTimeseriesComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: PcaTimeseriesComponent, selectors: [["app-pca-timeseries"]], inputs: { entries: "entries", record: "record", numComponents: "numComponents" }, decls: 2, vars: 2, consts: [["id", "chart-pca"], ["baseChart", "", "chartType", "line", 3, "datasets", "options"]], template: function PcaTimeseriesComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](1, "canvas", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
@@ -1289,11 +1562,13 @@ PcaTimeseriesComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵd
         args: [{
                 selector: 'app-pca-timeseries',
                 templateUrl: './pca-timeseries.component.html',
-                styleUrls: ['./pca-timeseries.component.css']
+                styleUrls: ['./pca-timeseries.component.css'],
             }]
     }], null, { entries: [{
             type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"]
         }], record: [{
+            type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"]
+        }], numComponents: [{
             type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"]
         }] }); })();
 
@@ -1388,9 +1663,9 @@ function ListComponent_tr_11_Template(rf, ctx) { if (rf & 1) {
 class ListComponent {
     constructor(firebase) {
         this.firebase = firebase;
-        this.displayedColumns = ["createdAt", "pca1", "activities"];
+        this.displayedColumns = ['createdAt', 'pca1', 'activities'];
         // TODO make this configurable
-        this.activeStat = "3mPNep3p4vuiPJvBkCiU";
+        this.activeStat = '3mPNep3p4vuiPJvBkCiU';
     }
     ngOnInit() {
         const entriesStream = this.firebase.getRecentEntriesWithStats(50, this.activeStat);
@@ -1429,7 +1704,7 @@ ListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComp
         args: [{
                 selector: 'app-list',
                 templateUrl: './list.component.html',
-                styleUrls: ['./list.component.css']
+                styleUrls: ['./list.component.css'],
             }]
     }], function () { return [{ type: _services_firebase_service__WEBPACK_IMPORTED_MODULE_2__["FirebaseService"] }]; }, null); })();
 
@@ -1562,64 +1837,70 @@ class FormComponent {
         this.emotions = [];
         this.tagifySettings = {
             autoComplete: { enabled: true, rightKey: true },
-            whitelist: []
+            whitelist: [],
         };
         this.activitiesReady = false;
         this.frequentActivitiesReady = false;
         this.validation_messages = {
-            name: [
-                { type: "required", message: "Name is required" }
-            ]
+            name: [{ type: 'required', message: 'Name is required' }],
         };
     }
     get emotionControls() {
-        return this.entryForm.get("emotions");
+        return this.entryForm.get('emotions');
     }
     ngOnInit() {
         const emotionGroup = {};
         // Generate a form group based on available emotions.
-        this.firebase.emotions.subscribe(emotions => {
+        this.firebase.emotions.subscribe((emotions) => {
             // Sort by name.
-            emotions.sort((a, b) => a.payload.doc.id > b.payload.doc.id ? 1 : -1);
+            emotions.sort((a, b) => (a.payload.doc.id > b.payload.doc.id ? 1 : -1));
             emotions.forEach((e) => {
                 const doc = e.payload.doc;
                 this.emotions.push(Object.assign({ id: doc.id }, doc.data()));
-                emotionGroup[doc.id] = this.fb.control("");
+                emotionGroup[doc.id] = this.fb.control('');
             });
             this.entryForm = this.fb.group({
                 activities: [],
                 emotions: this.fb.group(emotionGroup),
             });
         });
-        this.firebase.activities.subscribe(activitySnapshots => {
-            this.tagifySettings.whitelist = activitySnapshots.map(a => a.payload.doc.id);
+        this.firebase.activities.subscribe((activitySnapshots) => {
+            this.tagifySettings.whitelist = activitySnapshots.map((a) => a.payload.doc.id);
             this.activitiesReady = true;
         });
-        this.firebase.getFrequentActivities().subscribe(acts => {
-            this.frequentActivities = acts.map(a => {
+        this.firebase.getFrequentActivities().subscribe((acts) => {
+            this.frequentActivities = acts.map((a) => {
                 return { name: a.payload.doc.id, count: a.payload.doc.data().count };
             });
             this.frequentActivitiesReady = true;
         });
     }
     onSubmit(value) {
-        value.activities = value.activities ? value.activities.map(el => el.value) : [];
+        const activities = value.activities
+            ? value.activities.map((el) => el.value)
+            : [];
         // Remove emotions which were not set.
-        value.emotions = Object.entries(value.emotions)
-            .filter((item) => item[1] != "")
+        const emotions = Object.entries(value.emotions)
+            .filter((item) => item[1] != '')
             .reduce((obj, item) => {
             obj[item[0]] = item[1];
             return obj;
         }, {});
-        this.firebase.addEntry(value).then(res => {
-            this.router.navigate(["/list"]);
+        const entry = {
+            activities: activities,
+            emotions: emotions,
+            createdAt: this.firebase.now(),
+        };
+        this.firebase.addEntry(entry).then(() => {
+            this.router.navigate(['/list']);
         });
     }
     onPickActivity(event, activity) {
         // Remove associated tag component
         let el = event.srcElement;
         // find tagify root node for this tag
-        while (!el.hasAttribute("class") || ` ${el.getAttribute("class")} `.indexOf(" tagify__tag ") == -1) {
+        while (!el.hasAttribute('class') ||
+            ` ${el.getAttribute('class')} `.indexOf(' tagify__tag ') == -1) {
             el = el.parentNode;
         }
         // One more up
@@ -1642,7 +1923,7 @@ FormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComp
         args: [{
                 selector: 'app-form',
                 templateUrl: './form.component.html',
-                styleUrls: ['./form.component.css']
+                styleUrls: ['./form.component.css'],
             }]
     }], function () { return [{ type: _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormBuilder"] }, { type: _services_firebase_service__WEBPACK_IMPORTED_MODULE_2__["FirebaseService"] }, { type: _angular_router__WEBPACK_IMPORTED_MODULE_3__["Router"] }, { type: _tagify_angular_tagify_service__WEBPACK_IMPORTED_MODULE_4__["TagifyService"] }]; }, null); })();
 
@@ -1661,10 +1942,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AppRoutingModule", function() { return AppRoutingModule; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "fXoL");
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/router */ "tyNb");
-/* harmony import */ var _form_form_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./form/form.component */ "urH6");
-/* harmony import */ var _list_list_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./list/list.component */ "uMRu");
-/* harmony import */ var _stats_stats_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./stats/stats.component */ "TtVv");
-/* harmony import */ var _stats_details_stats_details_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./stats-details/stats-details.component */ "UrxW");
+/* harmony import */ var _angular_fire_auth_guard__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/fire/auth-guard */ "HTFn");
+/* harmony import */ var _form_form_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./form/form.component */ "urH6");
+/* harmony import */ var _list_list_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./list/list.component */ "uMRu");
+/* harmony import */ var _stats_stats_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./stats/stats.component */ "TtVv");
+/* harmony import */ var _stats_details_stats_details_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./stats-details/stats-details.component */ "UrxW");
+/* harmony import */ var _export_export_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./export/export.component */ "/MBm");
+
+
 
 
 
@@ -1674,11 +1959,16 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const routes = [
-    { path: "form", component: _form_form_component__WEBPACK_IMPORTED_MODULE_2__["FormComponent"] },
-    { path: "list", component: _list_list_component__WEBPACK_IMPORTED_MODULE_3__["ListComponent"] },
-    { path: "stats", component: _stats_stats_component__WEBPACK_IMPORTED_MODULE_4__["StatsComponent"] },
-    { path: "stats/:id", component: _stats_details_stats_details_component__WEBPACK_IMPORTED_MODULE_5__["StatsDetailsComponent"] },
-    { path: "", redirectTo: "list", pathMatch: "full" },
+    {
+        path: 'form',
+        component: _form_form_component__WEBPACK_IMPORTED_MODULE_3__["FormComponent"],
+        canActivate: [_angular_fire_auth_guard__WEBPACK_IMPORTED_MODULE_2__["AngularFireAuthGuard"]],
+    },
+    { path: 'list', component: _list_list_component__WEBPACK_IMPORTED_MODULE_4__["ListComponent"] },
+    { path: 'stats', component: _stats_stats_component__WEBPACK_IMPORTED_MODULE_5__["StatsComponent"] },
+    { path: 'stats/:id', component: _stats_details_stats_details_component__WEBPACK_IMPORTED_MODULE_6__["StatsDetailsComponent"] },
+    { path: 'export', component: _export_export_component__WEBPACK_IMPORTED_MODULE_7__["ExportComponent"] },
+    { path: '', redirectTo: 'list', pathMatch: 'full' },
 ];
 class AppRoutingModule {
 }
@@ -1690,7 +1980,7 @@ AppRoutingModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineI
         args: [{
                 declarations: [],
                 imports: [_angular_router__WEBPACK_IMPORTED_MODULE_1__["RouterModule"].forRoot(routes, { useHash: true })],
-                exports: [_angular_router__WEBPACK_IMPORTED_MODULE_1__["RouterModule"]]
+                exports: [_angular_router__WEBPACK_IMPORTED_MODULE_1__["RouterModule"]],
             }]
     }], null, null); })();
 
@@ -1718,7 +2008,7 @@ if (_environments_environment__WEBPACK_IMPORTED_MODULE_1__["environment"].produc
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["enableProdMode"])();
 }
 _angular_platform_browser__WEBPACK_IMPORTED_MODULE_3__["platformBrowser"]().bootstrapModule(_app_app_module__WEBPACK_IMPORTED_MODULE_2__["AppModule"])
-    .catch(err => console.error(err));
+    .catch((err) => console.error(err));
 
 
 /***/ }),
