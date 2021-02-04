@@ -6,6 +6,7 @@ import { FormComponent } from './form/form.component';
 import { ListComponent } from './list/list.component';
 import { StatsComponent } from './stats/stats.component';
 import { StatsDetailsComponent } from './stats-details/stats-details.component';
+import { ExportComponent } from './export/export.component';
 
 const routes: Routes = [
   {
@@ -16,6 +17,7 @@ const routes: Routes = [
   { path: 'list', component: ListComponent },
   { path: 'stats', component: StatsComponent },
   { path: 'stats/:id', component: StatsDetailsComponent },
+  { path: 'export', component: ExportComponent },
 
   { path: '', redirectTo: 'list', pathMatch: 'full' },
 ];
