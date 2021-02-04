@@ -31,6 +31,7 @@ import { StatsComponent } from './stats/stats.component';
 import { StatsDetailsComponent } from './stats-details/stats-details.component';
 import { PcaTimeseriesComponent } from './pca-timeseries/pca-timeseries.component';
 import { PcaScatterComponent } from './pca-scatter/pca-scatter.component';
+import { ExportComponent } from './export/export.component';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import { PcaScatterComponent } from './pca-scatter/pca-scatter.component';
     StatsDetailsComponent,
     PcaTimeseriesComponent,
     PcaScatterComponent,
+    ExportComponent,
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebase),
